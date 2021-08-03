@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+sqlacodegen = "*"
+psycopg2 = "*"
+fastapi = "*"
+fastapi-responses = "*"
+uvicorn = "*"
+flake8 = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+code_quality = "flake8 --max-line-length=120"
