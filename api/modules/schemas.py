@@ -7,3 +7,10 @@ class Location(BaseModel):
     city: str
     county: str
     postal_code: int
+
+
+class LocationResponse(Location):
+    id: int
+
+    class Config:
+        orm_mode = True
