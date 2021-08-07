@@ -34,3 +34,24 @@ def delete_location_by_id(db: Session, location_id: int):
     db.delete(db_user)
     db.commit()
     return True
+
+
+def create_person(db: Session, person: schemas.Person):
+    db_person = models.Person(
+        first_name=person.first_name,
+        last_name=person.last_name
+    )
+    db.add(db_person)
+    db.commit()
+    db.refresh(db_person)
+    return db_person
+
+
+def get_person_by_all_infos(db: Session, person: schemas.Person):
+    return db.query(models.Person).filter(models.Person.first_name == person.first_name) \
+                                  .filter(models.Person.last_name == person.last_name) \
+                                  .first()
+
+
+def get_person_by_id(db: Session, person_id: int):
+    return db.query(models.Person).filter(models.Person.id == person_id).first()

@@ -54,11 +54,40 @@ async def get_location(location_id: int, db: Session = Depends(get_db)):
 
 @app.delete("/location/{location_id}", status_code=200)
 async def get_location(location_id: int, db: Session = Depends(get_db)):
+    # add check if event with location exists
     db_location = crud.get_location_by_id(db=db, location_id=location_id)
     if not db_location:
         raise HTTPException(status_code=404, detail="Location not exists")
     crud.delete_location_by_id(db=db, location_id=location_id)
     db_location = crud.get_location_by_id(db=db, location_id=location_id)
     if db_location:
-        raise HTTPException(status_code=500, detail="Impossible to delete location")
+        raise HTTPException(status_code=500, detail="Location not deleted")
     return status.HTTP_200_OK
+
+
+@app.put("/person", status_code=201)
+async def create_person(person: schemas.Person, db: Session = Depends(get_db)):
+    # add check if event with person exists
+    db_person = crud.get_person_by_all_infos(db=db, person=person)
+    if db_person:
+        raise HTTPException(status_code=400, detail="Person already exists")
+    db_person = crud.create_person(db=db, person=person)
+    if not db_person:
+        raise HTTPException(status_code=500, detail="Person not created")
+    return status.HTTP_201_CREATED
+
+
+@app.get("/person", response_model=schemas.PersonResponse)
+async def get_person_by_all_infos(person: schemas.Person, db: Session = Depends(get_db)):
+    db_person = crud.get_person_by_all_infos(db=db, person=person)
+    if not db_person:
+        raise HTTPException(status_code=404, detail="Person not exists")
+    return db_person
+
+
+@app.get("/person/{person_id}", response_model=schemas.PersonResponse)
+async def get_person_by_id(person_id: int, db: Session = Depends(get_db)):
+    db_person = crud.get_person_by_id(db=db, person_id=person_id)
+    if not db_person:
+        raise HTTPException(status_code=404, detail="Person not exists")
+    return db_person

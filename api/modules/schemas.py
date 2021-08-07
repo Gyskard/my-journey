@@ -14,3 +14,16 @@ class LocationResponse(Location):
 
     class Config:
         orm_mode = True
+
+
+class Person(BaseModel):
+    first_name: str
+    last_name: str
+
+
+class PersonResponse(Person):
+    id: int
+
+    class Config:
+        orm_mode = True
+
