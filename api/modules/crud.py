@@ -30,8 +30,8 @@ def get_location_by_id(db: Session, location_id: int):
 
 
 def delete_location_by_id(db: Session, location_id: int):
-    db_user = db.query(models.Location).filter(models.Location.id == location_id).first()
-    db.delete(db_user)
+    db_location = db.query(models.Location).filter(models.Location.id == location_id).first()
+    db.delete(db_location)
     db.commit()
     return True
 
@@ -55,3 +55,10 @@ def get_person_by_all_infos(db: Session, person: schemas.Person):
 
 def get_person_by_id(db: Session, person_id: int):
     return db.query(models.Person).filter(models.Person.id == person_id).first()
+
+
+def delete_person_by_id(db: Session, person_id: int):
+    db_person = db.query(models.Person).filter(models.Person.id == person_id).first()
+    db.delete(db_person)
+    db.commit()
+    return True
