@@ -44,9 +44,21 @@ async def get_location(location: schemas.Location, db: Session = Depends(get_db)
     return db_location
 
 
-@app.get("/location/{location_id}")
+@app.get("/location/{location_id}", response_model=schemas.LocationResponse)
 async def get_location(location_id: int, db: Session = Depends(get_db)):
     db_location = crud.get_location_by_id(db=db, location_id=location_id)
     if not db_location:
         raise HTTPException(status_code=404, detail="Location not exists")
     return db_location
+
+
+@app.delete("/location/{location_id}", status_code=200)
+async def get_location(location_id: int, db: Session = Depends(get_db)):
+    db_location = crud.get_location_by_id(db=db, location_id=location_id)
+    if not db_location:
+        raise HTTPException(status_code=404, detail="Location not exists")
+    crud.delete_location_by_id(db=db, location_id=location_id)
+    db_location = crud.get_location_by_id(db=db, location_id=location_id)
+    if db_location:
+        raise HTTPException(status_code=500, detail="Impossible to delete location")
+    return status.HTTP_200_OK

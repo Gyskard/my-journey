@@ -9,7 +9,7 @@ metadata = Base.metadata
 class Location(Base):
     __tablename__ = 'location'
 
-    id = Column(Integer, primary_key=True, unique=True, server_default=text("nextval('location_id_seq'::regclass)"))
+    id = Column(Integer, primary_key=True, unique=True)
     house_number_street = Column(Integer)
     street_name = Column(String)
     city = Column(String)
@@ -20,15 +20,15 @@ class Location(Base):
 class Person(Base):
     __tablename__ = 'person'
 
-    id = Column(Integer, primary_key=True, unique=True, server_default=text("nextval('person_id_seq'::regclass)"))
+    id = Column(Integer, primary_key=True, unique=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
 
 
-class Note(Base):
-    __tablename__ = 'note'
+class Event(Base):
+    __tablename__ = 'event'
 
-    id = Column(Integer, primary_key=True, unique=True, server_default=text("nextval('notes_id_seq'::regclass)"))
+    id = Column(Integer, primary_key=True, unique=True)
     description = Column(String, nullable=False)
     date = Column(Date, nullable=False)
     location_id = Column(ForeignKey('location.id'), nullable=False)
@@ -39,6 +39,6 @@ class Note(Base):
 
 t_participation = Table(
     'participation', metadata,
-    Column('note_id', ForeignKey('note.id')),
-    Column('person_id', ForeignKey('person.id'))
+    Column('event_id', ForeignKey('event.id'), nullable=False),
+    Column('person_id', ForeignKey('person.id'), nullable=False)
 )

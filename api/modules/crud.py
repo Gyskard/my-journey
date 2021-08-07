@@ -27,3 +27,10 @@ def get_location_by_all_infos(db: Session, location: schemas.Location):
 
 def get_location_by_id(db: Session, location_id: int):
     return db.query(models.Location).filter(models.Location.id == location_id).first()
+
+
+def delete_location_by_id(db: Session, location_id: int):
+    db_user = db.query(models.Location).filter(models.Location.id == location_id).first()
+    db.delete(db_user)
+    db.commit()
+    return True
