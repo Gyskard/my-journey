@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Date, ForeignKey, Integer, String, Table, text
+from sqlalchemy import Column, Date, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -24,6 +24,8 @@ class Person(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
 
+    events = relationship('Event', secondary='participation')
+
 
 class Event(Base):
     __tablename__ = 'event'
@@ -37,8 +39,8 @@ class Event(Base):
     persons = relationship('Person', secondary='participation')
 
 
-t_participation = Table(
-    'participation', metadata,
-    Column('event_id', ForeignKey('event.id'), nullable=False),
-    Column('person_id', ForeignKey('person.id'), nullable=False)
-)
+class Participation(Base):
+    __tablename__ = 'participation'
+
+    event_id = Column(Integer, ForeignKey('event.id'), primary_key=True)
+    person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)

@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, status, responses
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi_responses import custom_openapi
 from sqlalchemy.orm import Session
 
@@ -37,7 +37,7 @@ async def create_location(location: schemas.Location, db: Session = Depends(get_
 
 
 @app.get("/location", response_model=schemas.LocationResponse)
-async def get_location(location: schemas.Location, db: Session = Depends(get_db)):
+async def get_location_by_all_infos(location: schemas.Location, db: Session = Depends(get_db)):
     db_location = crud.get_location_by_all_infos(db=db, location=location)
     if not db_location:
         raise HTTPException(status_code=404, detail="Location not exists")
@@ -45,7 +45,7 @@ async def get_location(location: schemas.Location, db: Session = Depends(get_db)
 
 
 @app.get("/location/{location_id}", response_model=schemas.LocationResponse)
-async def get_location(location_id: int, db: Session = Depends(get_db)):
+async def get_location_by_id(location_id: int, db: Session = Depends(get_db)):
     db_location = crud.get_location_by_id(db=db, location_id=location_id)
     if not db_location:
         raise HTTPException(status_code=404, detail="Location not exists")
@@ -53,8 +53,7 @@ async def get_location(location_id: int, db: Session = Depends(get_db)):
 
 
 @app.delete("/location/{location_id}", status_code=200)
-async def get_location(location_id: int, db: Session = Depends(get_db)):
-    # add support for event where location exists
+async def delete_location(location_id: int, db: Session = Depends(get_db)):
     db_location = crud.get_location_by_id(db=db, location_id=location_id)
     if not db_location:
         raise HTTPException(status_code=404, detail="Location not exists")
@@ -103,3 +102,26 @@ async def delete_person(person_id: int, db: Session = Depends(get_db)):
     if db_person:
         raise HTTPException(status_code=500, detail="Person not deleted")
     return status.HTTP_200_OK
+
+
+@app.put("/event", status_code=201)
+async def create_event(event: schemas.Event, db: Session = Depends(get_db)):
+    db_location = crud.get_location_by_id(db=db, location_id=event.location_id)
+    if not db_location:
+        raise HTTPException(status_code=404, detail="Location linked to the event not exist.")
+    db_event = crud.create_event(db=db, event=event)
+    if not db_event:
+        raise HTTPException(status_code=500, detail="Event not created")
+    return status.HTTP_201_CREATED
+
+
+@app.put("/participation", status_code=201)
+async def create_participation(participation: schemas.Participation, db: Session = Depends(get_db)):
+    db_person = crud.get_person_by_id(db=db, person_id=participation.person_id)
+    if not db_person:
+        raise HTTPException(status_code=404, detail="Person not exists")
+    # check event exists
+    db_participation = crud.create_participation(db=db, participation=participation)
+    if not db_participation:
+        raise HTTPException(status_code=500, detail="Participation not created")
+    return status.HTTP_201_CREATED

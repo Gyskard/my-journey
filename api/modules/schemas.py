@@ -1,3 +1,5 @@
+from datetime import date
+
 from pydantic import BaseModel
 
 
@@ -27,3 +29,13 @@ class PersonResponse(Person):
     class Config:
         orm_mode = True
 
+
+class Event(BaseModel):
+    description: str
+    date: date
+    location_id: int
+
+
+class Participation(BaseModel):
+    event_id: int
+    person_id: int
