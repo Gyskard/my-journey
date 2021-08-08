@@ -113,3 +113,10 @@ def get_participation(db: Session, person_id: int, event_id: int):
                                                      .filter(models.Participation.event_id == event_id) \
                                                      .all()
     return db_participation
+
+
+def delete_event(db: Session, event_id: int):
+    db_event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    db.delete(db_event)
+    db.commit()
+    return True

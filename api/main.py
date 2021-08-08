@@ -103,9 +103,8 @@ async def delete_person(person_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Person not deleted")
     for event_person in db_event_person:
         db_person_event = crud.get_person_by_event(db=db, event_id=event_person)
-        if len(db_person_event) == 0:
-            # delete event
-            print("test")
+        if len(db_person_event) == 0:  # no one person linked to the event
+            crud.delete_event(db=db, event_id=event_person)
     return status.HTTP_200_OK
 
 
@@ -144,6 +143,18 @@ async def get_person_by_event(event_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Event not exists")
     db_person_event = crud.get_person_by_event(db=db, event_id=event_id)
     return db_person_event
+
+
+@app.delete("/event/{event_id}", status_code=200)
+async def delete_event(event_id: int, db: Session = Depends(get_db)):
+    db_event = crud.get_event(db=db, event_id=event_id)
+    if not db_event:
+        raise HTTPException(status_code=404, detail="Event not exists")
+    crud.delete_event(db=db, event_id=event_id)
+    db_event = crud.get_event(db=db, event_id=event_id)
+    if db_event:
+        raise HTTPException(status_code=500, detail="Event not deleted")
+    return status.HTTP_200_OK
 
 
 @app.put("/participation", status_code=201)
