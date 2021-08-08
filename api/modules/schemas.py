@@ -36,6 +36,13 @@ class Event(BaseModel):
     location_id: int
 
 
+class EventResponse(Event):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
 class Participation(BaseModel):
     event_id: int
     person_id: int

@@ -86,3 +86,30 @@ def create_participation(db: Session, participation: schemas.Participation):
     db.commit()
     db.refresh(db_participation)
     return db_participation
+
+
+def get_event(db: Session, event_id: int):
+    return db.query(models.Event).filter(models.Event.id == event_id).first()
+
+
+def get_person_by_event(db: Session, event_id: int):
+    db_person_event = []
+    db_participation = db.query(models.Participation.person_id).filter(models.Participation.event_id == event_id).all()
+    for event in db_participation:
+        db_person_event.append(event.person_id)
+    return db_person_event
+
+
+def get_event_by_person(db: Session, person_id: int):
+    db_event_person = []
+    db_participation = db.query(models.Participation.event_id).filter(models.Participation.person_id == person_id).all()
+    for person in db_participation:
+        db_event_person.append(person.event_id)
+    return db_event_person
+
+
+def get_participation(db: Session, person_id: int, event_id: int):
+    db_participation = db.query(models.Participation).filter(models.Participation.person_id == person_id) \
+                                                     .filter(models.Participation.event_id == event_id) \
+                                                     .all()
+    return db_participation
