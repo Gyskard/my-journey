@@ -172,3 +172,23 @@ async def create_participation(participation: schemas.Participation, db: Session
     if not db_participation:
         raise HTTPException(status_code=500, detail="Participation not created")
     return status.HTTP_201_CREATED
+
+
+@app.delete("/participation", status_code=201)
+async def delete_participation(participation: schemas.Participation, db: Session = Depends(get_db)):
+    db_person = crud.get_person_by_id(db=db, person_id=participation.person_id)
+    if not db_person:
+        raise HTTPException(status_code=404, detail="Person not exists")
+    db_event = crud.get_event(db=db, event_id=participation.event_id)
+    if not db_event:
+        raise HTTPException(status_code=404, detail="Event not exists")
+    db_event_person = crud.get_event_by_person(db=db, person_id=participation.person_id)
+    if not db_event_person:
+        raise HTTPException(status_code=404, detail="No event with this person")
+    if participation.event_id not in db_event_person:
+        raise HTTPException(status_code=404, detail="Participation not exists")
+    crud.delete_participation(db=db, participation=participation)
+    db_event_person = crud.get_event_by_person(db=db, person_id=participation.person_id)
+    if participation.event_id in db_event_person:
+        raise HTTPException(status_code=500, detail="Participation not deleted")
+    return status.HTTP_200_OK

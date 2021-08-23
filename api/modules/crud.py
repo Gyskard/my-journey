@@ -120,3 +120,12 @@ def delete_event(db: Session, event_id: int):
     db.delete(db_event)
     db.commit()
     return True
+
+
+def delete_participation(db: Session, participation: schemas.Participation):
+    db_event = db.query(models.Participation).filter(models.Participation.event_id == participation.event_id) \
+                                              .filter(models.Participation.person_id == participation.person_id) \
+                                              .first()
+    db.delete(db_event)
+    db.commit()
+    return True
