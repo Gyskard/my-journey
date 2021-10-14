@@ -19,4 +19,3 @@ python_version = "3.9"
 
 [scripts]
 code_quality = "flake8 --max-line-length=120"
-test = "python ./tests/test_location.py"
