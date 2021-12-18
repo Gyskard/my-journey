@@ -18,4 +18,5 @@ requests = "*"
 python_version = "3.9"
 
 [scripts]
+serve = "uvicorn main:app"
 code_quality = "flake8 --max-line-length=120"

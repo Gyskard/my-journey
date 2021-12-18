@@ -7,9 +7,25 @@ from modules.database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(
+    title="My journey",
+    openapi_tags=[
+        {
+            "name": "location",
+        },
+        {
+            "name": "person",
+        },
+        {
+            "name": "event",
+        },
+        {
+            "name": "participation"
+        },
+    ]
+)
 
-app.openapi = custom_openapi(app)
+app.openapi = custom_openapi(app) # used custom_openapi to add custom error in docs
 
 
 def get_db():
@@ -20,12 +36,7 @@ def get_db():
         db.close()
 
 
-@app.get("/")
-async def root():
-    return {"message": "Server is online!"}
-
-
-@app.put("/location", status_code=201)
+@app.put("/location", tags=["location"], status_code=201)
 async def create_location(location: schemas.Location, db: Session = Depends(get_db)):
     db_location = crud.get_location_by_all_infos(db=db, location=location)
     if db_location:
@@ -36,7 +47,7 @@ async def create_location(location: schemas.Location, db: Session = Depends(get_
     return status.HTTP_201_CREATED
 
 
-@app.get("/location", response_model=schemas.LocationResponse)
+@app.get("/location", tags=["location"], response_model=schemas.LocationResponse)
 async def get_location_by_all_infos(location: schemas.Location, db: Session = Depends(get_db)):
     db_location = crud.get_location_by_all_infos(db=db, location=location)
     if not db_location:
@@ -44,7 +55,7 @@ async def get_location_by_all_infos(location: schemas.Location, db: Session = De
     return db_location
 
 
-@app.get("/location/{location_id}", response_model=schemas.LocationResponse)
+@app.get("/location/{location_id}", tags=["location"], response_model=schemas.LocationResponse)
 async def get_location_by_id(location_id: int, db: Session = Depends(get_db)):
     db_location = crud.get_location_by_id(db=db, location_id=location_id)
     if not db_location:
@@ -52,7 +63,7 @@ async def get_location_by_id(location_id: int, db: Session = Depends(get_db)):
     return db_location
 
 
-@app.delete("/location/{location_id}", status_code=200)
+@app.delete("/location/{location_id}", tags=["location"], status_code=200)
 async def delete_location(location_id: int, db: Session = Depends(get_db)):
     db_location = crud.get_location_by_id(db=db, location_id=location_id)
     if not db_location:
@@ -64,7 +75,7 @@ async def delete_location(location_id: int, db: Session = Depends(get_db)):
     return status.HTTP_200_OK
 
 
-@app.put("/person", status_code=201)
+@app.put("/person", tags=["person"], status_code=201)
 async def create_person(person: schemas.Person, db: Session = Depends(get_db)):
     db_person = crud.get_person_by_all_infos(db=db, person=person)
     if db_person:
@@ -75,7 +86,7 @@ async def create_person(person: schemas.Person, db: Session = Depends(get_db)):
     return status.HTTP_201_CREATED
 
 
-@app.get("/person", response_model=schemas.PersonResponse)
+@app.get("/person", tags=["person"], response_model=schemas.PersonResponse)
 async def get_person_by_all_infos(person: schemas.Person, db: Session = Depends(get_db)):
     db_person = crud.get_person_by_all_infos(db=db, person=person)
     if not db_person:
@@ -83,7 +94,7 @@ async def get_person_by_all_infos(person: schemas.Person, db: Session = Depends(
     return db_person
 
 
-@app.get("/person/{person_id}", response_model=schemas.PersonResponse)
+@app.get("/person/{person_id}", tags=["person"], response_model=schemas.PersonResponse)
 async def get_person_by_id(person_id: int, db: Session = Depends(get_db)):
     db_person = crud.get_person_by_id(db=db, person_id=person_id)
     if not db_person:
@@ -91,7 +102,7 @@ async def get_person_by_id(person_id: int, db: Session = Depends(get_db)):
     return db_person
 
 
-@app.delete("/person/{person_id}", status_code=200)
+@app.delete("/person/{person_id}", tags=["person"], status_code=200)
 async def delete_person(person_id: int, db: Session = Depends(get_db)):
     db_person = crud.get_person_by_id(db=db, person_id=person_id)
     if not db_person:
@@ -108,7 +119,7 @@ async def delete_person(person_id: int, db: Session = Depends(get_db)):
     return status.HTTP_200_OK
 
 
-@app.get("/person/event/{person_id}", response_model=list)
+@app.get("/person/event/{person_id}", tags=["person"], response_model=list)
 async def get_event_by_person(person_id: int, db: Session = Depends(get_db)):
     db_person = crud.get_person_by_id(db=db, person_id=person_id)
     if not db_person:
@@ -117,7 +128,7 @@ async def get_event_by_person(person_id: int, db: Session = Depends(get_db)):
     return db_event_person
 
 
-@app.put("/event", status_code=201)
+@app.put("/event", tags=["event"], status_code=201)
 async def create_event(event: schemas.Event, db: Session = Depends(get_db)):
     db_location = crud.get_location_by_id(db=db, location_id=event.location_id)
     if not db_location:
@@ -128,7 +139,7 @@ async def create_event(event: schemas.Event, db: Session = Depends(get_db)):
     return status.HTTP_201_CREATED
 
 
-@app.get("/event/{event_id}", response_model=schemas.EventResponse)
+@app.get("/event/{event_id}", tags=["event"], response_model=schemas.EventResponse)
 async def get_event(event_id: int, db: Session = Depends(get_db)):
     db_event = crud.get_event(db=db, event_id=event_id)
     if not db_event:
@@ -136,7 +147,7 @@ async def get_event(event_id: int, db: Session = Depends(get_db)):
     return db_event
 
 
-@app.get("/event/person/{event_id}", response_model=list)
+@app.get("/event/person/{event_id}", tags=["event"], response_model=list)
 async def get_person_by_event(event_id: int, db: Session = Depends(get_db)):
     db_event = crud.get_event(db=db, event_id=event_id)
     if not db_event:
@@ -145,7 +156,7 @@ async def get_person_by_event(event_id: int, db: Session = Depends(get_db)):
     return db_person_event
 
 
-@app.delete("/event/{event_id}", status_code=200)
+@app.delete("/event/{event_id}", tags=["event"], status_code=200)
 async def delete_event(event_id: int, db: Session = Depends(get_db)):
     db_event = crud.get_event(db=db, event_id=event_id)
     if not db_event:
@@ -157,7 +168,7 @@ async def delete_event(event_id: int, db: Session = Depends(get_db)):
     return status.HTTP_200_OK
 
 
-@app.put("/participation", status_code=201)
+@app.put("/participation", tags=["participation"], status_code=201)
 async def create_participation(participation: schemas.Participation, db: Session = Depends(get_db)):
     db_person = crud.get_person_by_id(db=db, person_id=participation.person_id)
     if not db_person:
@@ -174,7 +185,7 @@ async def create_participation(participation: schemas.Participation, db: Session
     return status.HTTP_201_CREATED
 
 
-@app.delete("/participation", status_code=201)
+@app.delete("/participation", tags=["participation"], status_code=201)
 async def delete_participation(participation: schemas.Participation, db: Session = Depends(get_db)):
     db_person = crud.get_person_by_id(db=db, person_id=participation.person_id)
     if not db_person:

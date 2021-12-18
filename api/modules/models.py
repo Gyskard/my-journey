@@ -10,6 +10,7 @@ class Location(Base):
     __tablename__ = 'location'
 
     id = Column(Integer, primary_key=True, unique=True)
+    name = Column(String, nullable=False)
     house_number_street = Column(Integer)
     street_name = Column(String)
     city = Column(String)

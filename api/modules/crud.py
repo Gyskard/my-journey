@@ -5,6 +5,7 @@ from . import models, schemas
 
 def create_location(db: Session, location: schemas.Location):
     db_location = models.Location(
+        name=location.name,
         house_number_street=location.house_number_street,
         street_name=location.street_name,
         city=location.city,
@@ -18,7 +19,9 @@ def create_location(db: Session, location: schemas.Location):
 
 
 def get_location_by_all_infos(db: Session, location: schemas.Location):
-    return db.query(models.Location).filter(models.Location.city == location.city) \
+    return db.query(models.Location) \
+        .filter(models.Location.name == location.name) \
+        .filter(models.Location.city == location.city) \
         .filter(models.Location.county == location.county) \
         .filter(models.Location.postal_code == location.postal_code) \
         .filter(models.Location.street_name == location.street_name) \
@@ -49,7 +52,8 @@ def create_person(db: Session, person: schemas.Person):
 
 
 def get_person_by_all_infos(db: Session, person: schemas.Person):
-    return db.query(models.Person).filter(models.Person.first_name == person.first_name) \
+    return db.query(models.Person) \
+        .filter(models.Person.first_name == person.first_name) \
         .filter(models.Person.last_name == person.last_name) \
         .first()
 
@@ -109,9 +113,10 @@ def get_event_by_person(db: Session, person_id: int):
 
 
 def get_participation(db: Session, person_id: int, event_id: int):
-    db_participation = db.query(models.Participation).filter(models.Participation.person_id == person_id) \
-                                                     .filter(models.Participation.event_id == event_id) \
-                                                     .all()
+    db_participation = db.query(models.Participation) \
+        .filter(models.Participation.person_id == person_id) \
+        .filter(models.Participation.event_id == event_id) \
+        .all()
     return db_participation
 
 
@@ -123,9 +128,10 @@ def delete_event(db: Session, event_id: int):
 
 
 def delete_participation(db: Session, participation: schemas.Participation):
-    db_event = db.query(models.Participation).filter(models.Participation.event_id == participation.event_id) \
-                                              .filter(models.Participation.person_id == participation.person_id) \
-                                              .first()
+    db_event = db.query(models.Participation) \
+        .filter(models.Participation.event_id == participation.event_id) \
+        .filter(models.Participation.person_id == participation.person_id) \
+        .first()
     db.delete(db_event)
     db.commit()
     return True
