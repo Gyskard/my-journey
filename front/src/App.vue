@@ -4,14 +4,19 @@
       <v-toolbar-title>My journey</v-toolbar-title>
     </v-app-bar>
     <v-main>
-      <HelloWorld/>
+      <Search class="mt-3"/>
     </v-main>
   </v-app>
 </template>
 
 <script>
+import Search from "@/components/Search";
+
 export default {
   name: 'App',
+  components: {
+    Search
+  }
 };
 </script>
 
