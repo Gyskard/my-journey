@@ -25,7 +25,7 @@ app = FastAPI(
     ]
 )
 
-app.openapi = custom_openapi(app) # used custom_openapi to add custom error in docs
+app.openapi = custom_openapi(app)  # used custom_openapi to add custom error in docs
 
 
 def get_db():
