@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class Location(BaseModel):
+    name: str
     house_number_street: int
     street_name: str
     city: str
@@ -31,6 +32,7 @@ class PersonResponse(Person):
 
 
 class Event(BaseModel):
+    name: str
     description: str
     date: date
     location_id: int

@@ -10,11 +10,11 @@ class Location(Base):
     __tablename__ = 'location'
 
     id = Column(Integer, primary_key=True, unique=True)
-    name = Column(String, nullable=False)
+    name = Column(String)
     house_number_street = Column(Integer)
     street_name = Column(String)
     city = Column(String)
-    county = Column(String)
+    country = Column(String)
     postal_code = Column(Integer)
 
 
@@ -23,7 +23,7 @@ class Person(Base):
 
     id = Column(Integer, primary_key=True, unique=True)
     first_name = Column(String, nullable=False)
-    last_name = Column(String, nullable=False)
+    last_name = Column(String)
 
     events = relationship('Event', secondary='participation', back_populates='persons')
 
@@ -32,7 +32,8 @@ class Event(Base):
     __tablename__ = 'event'
 
     id = Column(Integer, primary_key=True, unique=True)
-    description = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+    description = Column(String)
     date = Column(Date, nullable=False)
     location_id = Column(ForeignKey('location.id'), nullable=False)
 

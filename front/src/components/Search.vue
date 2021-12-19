@@ -1,10 +1,10 @@
 <template>
-  <v-container style="max-width: 75em;">
+  <v-container>
     <v-row>
       <v-col>
         <v-text-field v-model="search" label="Search" prepend-icon="mdi-magnify" class="mx-5"></v-text-field>
       </v-col>
-      <v-col>
+      <v-col style="max-width: 18em;">
         <v-menu
             ref="menu"
             v-model="menu"
@@ -21,6 +21,7 @@
                 readonly
                 v-bind="attrs"
                 v-on="on"
+                clearable
             ></v-text-field>
           </template>
           <v-date-picker
@@ -49,14 +50,10 @@
 
     computed: {
       dateFormatToDisplay: function() {
-        let date;
-        if (this.dates === null) date = null
-        else if (this.dates.length === 1) date = this.$dateFormat(this.dates[0])
-        else if (this.dates.length === 2) {
-          if (this.dates[0] === this.dates[1]) date = this.$dateFormat(this.dates[0])
-          else date = `${this.$dateFormat(this.dates[0])} to ${this.$dateFormat(this.dates[1])}`
-        }
-        return date
+        if (this.dates === null) return null
+        if (this.dates.length === 1) return this.$dateFormat(this.dates[0])
+        if (this.dates[0] === this.dates[1]) return this.$dateFormat(this.dates[0])
+        return `${this.$dateFormat(this.dates[0])} to ${this.$dateFormat(this.dates[1])}`
       },
     }
   }
