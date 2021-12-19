@@ -42,11 +42,11 @@ export default {
         date: "2021-03-24",
         location: {
           name: "Location",
-          house_number_street: 0,
-          street_name: "Street",
-          city: "City",
-          country: "Country",
-          postal_code: 0
+          house_number_street: null,
+          street_name: null,
+          city: null,
+          country: null,
+          postal_code: null
         },
         persons: [
           {

@@ -2,6 +2,8 @@
   <v-app>
     <v-app-bar app color="primary" dark>
       <v-toolbar-title>My journey</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <AddForm />
     </v-app-bar>
     <v-main>
       <Search class="mt-4" style="max-width: 75em;"/>
@@ -13,10 +15,12 @@
 <script>
 import Search from "@/components/Search";
 import List from "@/components/List";
+import AddForm from "@/components/AddForm";
 
 export default {
   name: 'App',
   components: {
+    AddForm,
     List,
     Search
   }
