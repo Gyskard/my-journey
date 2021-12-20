@@ -9,6 +9,14 @@
       </v-card-title>
       <v-card-text>
         <v-container>
+          <v-container class="mt-4 mb-4">
+            <v-btn small color="secondary" dark>
+              Add a location
+            </v-btn>
+            <v-btn class="ml-4" small color="secondary" dark>
+              Add a person
+            </v-btn>
+          </v-container>
           <v-text-field v-model="eventName" label="Name" required></v-text-field>
           <v-text-field v-model="eventDescription" label="Description"></v-text-field>
           <v-menu
@@ -34,19 +42,19 @@
                 no-title color="orange darken-1"
             ></v-date-picker>
           </v-menu>
-          <v-row>
-            <v-col cols="10">
-              <v-select
-                  v-model="location"
-                  :items="locations"
-                  label="Location"
-                  required
-              ></v-select>
-            </v-col>
-            <v-col  cols="4">
-              <v-btn color="primary">Add a location</v-btn>
-            </v-col>
-          </v-row>
+          <v-select
+              v-model="location"
+              :items="locations"
+              label="Location"
+              required
+          ></v-select>
+          <v-combobox
+              v-model="participant"
+              :items="participants"
+              label="Participant"
+              multiple
+              chips
+          ></v-combobox>
         </v-container>
       </v-card-text>
       <v-card-actions>
@@ -74,6 +82,8 @@ export default {
     menu: false,
     locations: ['Location1', 'Location2'],
     location: null,
+    participants: ['First_name1 LAST_NAME1', 'First_name2 LAST_NAME2'],
+    participant: null,
   }),
 
   computed: {
