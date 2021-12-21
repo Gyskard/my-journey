@@ -144,25 +144,6 @@ export default {
         city: "",
         country: "",
       },
-      rules: {
-        houseNumberStreet: [
-          v => /^[0-9]*$/.test(v || '') || `Only numbers are allowed`,
-          v => (v || '').length <= 7 || `A maximum of 7 characters is allowed`,
-        ],
-        streetName: [
-          v => (v || '').length <= 25 || `A maximum of 25 characters is allowed`,
-        ],
-        postalCode: [
-          v => /^[0-9]*$/.test(v || '') || `Only numbers are allowed`,
-          v => (v || '').length <= 7 || `A maximum of 7 characters is allowed`,
-        ],
-        city: [
-          v => (v || '').length <= 75 || `A maximum of 75 characters is allowed`,
-        ],
-        country: [
-          v => (v || '').length <= 50 || `A maximum of 50 characters is allowed`,
-        ],
-      },
     },
     rules: {
       required() {
