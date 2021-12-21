@@ -72,12 +72,35 @@
         </v-card-title>
         <v-card-text>
           <v-form ref="locationForm" v-model="location.valid">
-            <v-text-field v-model="location.form.name" label="Name" :rules="location.rules.name"></v-text-field>
-            <v-text-field v-model="location.form.houseNumberStreet" label="House number street" :rules="location.rules.houseNumberStreet"></v-text-field>
-            <v-text-field v-model="location.form.streetName" label="Street name" :rules="location.rules.streetName"></v-text-field>
-            <v-text-field v-model="location.form.postalCode" label="Postal code" :rules="location.rules.postalCode"></v-text-field>
-            <v-text-field v-model="location.form.city" label="City" :rules="location.rules.city"></v-text-field>
-            <v-text-field v-model="location.form.country" label="Country" :rules="location.rules.country"></v-text-field>
+            <v-text-field
+                v-model="location.form.name"
+                label="Name"
+                :rules="[rules.required(), rules.maxSize(50)]"
+            ></v-text-field>
+            <v-text-field
+                v-model="location.form.houseNumberStreet"
+                label="House number street"
+                :rules="[rules.maxSize(7), rules.onlyNumbers()]"
+            ></v-text-field>
+            <v-text-field
+                v-model="location.form.streetName"
+                label="Street name"
+                :rules="[rules.maxSize(25)]"
+            ></v-text-field>
+            <v-text-field
+                v-model="location.form.postalCode"
+                label="Postal code"
+                :rules="[rules.maxSize(7), rules.onlyNumbers()]"
+            ></v-text-field>
+            <v-text-field
+                v-model="location.form.city"
+                label="City"
+                :rules="[rules.maxSize(75)]"
+            ></v-text-field>
+            <v-text-field
+                v-model="location.form.country"
+                label="Country"
+                :rules="[rules.maxSize(50)]"></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -122,19 +145,15 @@ export default {
         country: "",
       },
       rules: {
-        name: [
-          v => !!v || 'Name is required',
-          v => (v || '').length <= 25 || `A maximum of 25 characters is allowed`,
-        ],
         houseNumberStreet: [
-          v => (v || '').match(/^[0-9]*$/) || `Only numbers are allowed`,
+          v => /^[0-9]*$/.test(v || '') || `Only numbers are allowed`,
           v => (v || '').length <= 7 || `A maximum of 7 characters is allowed`,
         ],
         streetName: [
           v => (v || '').length <= 25 || `A maximum of 25 characters is allowed`,
         ],
         postalCode: [
-          v => (v || '').match(/^[0-9]*$/) || `Only numbers are allowed`,
+          v => /^[0-9]*$/.test(v || '') || `Only numbers are allowed`,
           v => (v || '').length <= 7 || `A maximum of 7 characters is allowed`,
         ],
         city: [
@@ -143,8 +162,19 @@ export default {
         country: [
           v => (v || '').length <= 50 || `A maximum of 50 characters is allowed`,
         ],
-      }
+      },
     },
+    rules: {
+      required() {
+        return v => !!v || 'Name is required'
+      },
+      maxSize(size) {
+        return v => (v || '').length <= size || `A maximum of ${size} characters is allowed`
+      },
+      onlyNumbers() {
+        return v => /^[0-9]*$/.test(v || '') || `Only numbers are allowed`
+      }
+    }
   }),
 
   computed: {
