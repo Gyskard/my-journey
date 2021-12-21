@@ -1,8 +1,8 @@
 <template>
   <div>
     <!-- used @click.stop instead of v-slot to disable auto-focus on button after closing dialog -->
-    <v-btn color="secondary" @click.stop="dialog = true">Add an event</v-btn>
-    <v-dialog v-model="dialog" max-width="900px">
+    <v-btn color="secondary" @click.stop="event.dialog = true">Add an event</v-btn>
+    <v-dialog v-model="event.dialog" max-width="900px">
       <v-card>
         <v-card-title>
           <span class="text-h5">Add an event</span>
@@ -10,15 +10,15 @@
         <v-card-text>
           <v-container>
             <v-container class="mt-4 mb-5">
-              <v-btn small color="secondary" dark>
+              <v-btn small color="secondary" dark @click="location.dialog = !location.dialog">
                 Add a location
               </v-btn>
               <v-btn class="ml-4" small color="secondary" dark>
                 Add a person
               </v-btn>
             </v-container>
-            <v-text-field v-model="eventName" label="Name" required></v-text-field>
-            <v-text-field v-model="eventDescription" label="Description"></v-text-field>
+            <v-text-field v-model="event.form.name" label="Name" required></v-text-field>
+            <v-text-field v-model="event.form.description" label="Description"></v-text-field>
             <v-menu
                 v-model="menu"
                 :close-on-content-click="false"
@@ -37,20 +37,20 @@
                 ></v-text-field>
               </template>
               <v-date-picker
-                  v-model="date"
-                  @input="menu = false"
+                  v-model="event.form.date"
+                  @input="event.dateMenu = false"
                   no-title color="orange darken-1"
               ></v-date-picker>
             </v-menu>
             <v-select
-                v-model="location"
-                :items="locations"
+                v-model="event.form.selectedLocations"
+                :items="event.form.locations"
                 label="Location"
                 required
             ></v-select>
             <v-combobox
-                v-model="participant"
-                :items="participants"
+                v-model="event.form.selectedParticipants"
+                :items="event.form.participants"
                 label="Participant"
                 multiple
                 chips
@@ -59,7 +59,30 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="dialog = false">
+          <v-btn color="primary" text @click="event.dialog = false">
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="location.dialog" max-width="500px">
+      <v-card>
+        <v-card-title>
+          Add a location
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="locationForm" v-model="location.valid">
+            <v-text-field v-model="location.form.name" label="Name" :rules="location.rules.name"></v-text-field>
+            <v-text-field v-model="location.form.houseNumberStreet" label="House number street" :rules="location.rules.houseNumberStreet"></v-text-field>
+            <v-text-field v-model="location.form.streetName" label="Street name" :rules="location.rules.streetName"></v-text-field>
+            <v-text-field v-model="location.form.postalCode" label="Postal code" :rules="location.rules.postalCode"></v-text-field>
+            <v-text-field v-model="location.form.city" label="City" :rules="location.rules.city"></v-text-field>
+            <v-text-field v-model="location.form.country" label="Country" :rules="location.rules.country"></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="saveLocation">
             Save
           </v-btn>
         </v-card-actions>
@@ -73,20 +96,67 @@ export default {
   name: 'AddForm',
 
   data: () => ({
-    dialog: false,
-    eventName: "",
-    eventDescription: "",
-    date: "",
     menu: false,
-    locations: ['Location1', 'Location2'],
-    location: null,
-    participants: ['First_name1 LAST_NAME1', 'First_name2 LAST_NAME2'],
-    participant: null,
+    event: {
+      dialog: false,
+      dateMenu: false,
+      form: {
+        name: "",
+        description: "",
+        date: "",
+        locations: ['Location1', 'Location2'],
+        selectedLocations: null,
+        participants: ['First_name1 LAST_NAME1', 'First_name2 LAST_NAME2'],
+        selectedParticipants: null,
+      }
+    },
+    location: {
+      dialog: null,
+      valid: true,
+      form: {
+        name: "",
+        houseNumberStreet: "",
+        streetName: "",
+        postalCode: "",
+        city: "",
+        country: "",
+      },
+      rules: {
+        name: [
+          v => !!v || 'Name is required',
+          v => (v || '').length <= 25 || `A maximum of 25 characters is allowed`,
+        ],
+        houseNumberStreet: [
+          v => (v || '').match(/^[0-9]*$/) || `Only numbers are allowed`,
+          v => (v || '').length <= 7 || `A maximum of 7 characters is allowed`,
+        ],
+        streetName: [
+          v => (v || '').length <= 25 || `A maximum of 25 characters is allowed`,
+        ],
+        postalCode: [
+          v => (v || '').match(/^[0-9]*$/) || `Only numbers are allowed`,
+          v => (v || '').length <= 7 || `A maximum of 7 characters is allowed`,
+        ],
+        city: [
+          v => (v || '').length <= 75 || `A maximum of 75 characters is allowed`,
+        ],
+        country: [
+          v => (v || '').length <= 50 || `A maximum of 50 characters is allowed`,
+        ],
+      }
+    },
   }),
 
   computed: {
     dateFormat: function () {
-      return this.date !== "" ?  this.$dateFormat(this.date) : ""
+      return this.event.form.date !== "" ?  this.$dateFormat(this.event.form.date) : ""
+    }
+  },
+
+  methods: {
+    saveLocation: function () {
+      this.$refs.locationForm.validate()
+      console.log(this.location.valid)
     }
   }
 }
