@@ -1,4 +1,5 @@
 from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi_responses import custom_openapi
 from sqlalchemy.orm import Session
 
@@ -24,6 +25,17 @@ app = FastAPI(
         },
     ]
 )
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 app.openapi = custom_openapi(app)  # used custom_openapi to add custom error in docs
 

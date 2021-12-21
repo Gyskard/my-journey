@@ -167,7 +167,10 @@ export default {
   methods: {
     saveLocation: function () {
       this.$refs.locationForm.validate()
-      console.log(this.location.valid)
+      this.$http.get(this.$api + "/location")
+        .then((response) => {
+          console.log(response)
+        })
     }
   }
 }
