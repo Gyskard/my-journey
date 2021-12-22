@@ -137,7 +137,7 @@ export default {
       dialog: null,
       valid: true,
       form: {
-        name: "",
+        name: null,
         houseNumberStreet: "",
         streetName: "",
         postalCode: "",
@@ -167,11 +167,31 @@ export default {
   methods: {
     saveLocation: function () {
       this.$refs.locationForm.validate()
-      this.$http.get(this.$api + "/location")
-        .then((response) => {
-          console.log(response)
-        })
-    }
+      if (this.location.valid) {
+        let json = {}
+        json["name"] = this.location.form.name
+        if (this.location.form.houseNumberStreet) json["house_number_street"] = this.location.form.houseNumberStreet
+        if (this.location.form.streetName) json["street_name"] = this.location.form.streetName
+        if (this.location.form.city) json["city"] = this.location.form.city
+        if (this.location.form.country) json["country"] = this.location.form.country
+        if (this.location.form.postalCode) json["postal_code"] = this.location.form.postalCode
+        this.$http.put(this.$api + "/location", json)
+            .then(() => {
+              this.$emit('display', {
+                timeout: 2000,
+                message: `The location ${json["name"]} has been created.`,
+                type: "info"
+              })
+            })
+            .catch((error) => {
+              this.$emit('display', {
+                timeout: 4000,
+                message: `An error occurred : "${error.response.data.detail}".`,
+                type: "error"
+              })
+            })
+      }
+    },
   }
 }
 </script>

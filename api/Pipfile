@@ -11,6 +11,7 @@ fastapi-responses = "*"
 uvicorn = "*"
 flake8 = "*"
 requests = "*"
+typing = "*"
 
 [dev-packages]
 

@@ -1,15 +1,15 @@
 from datetime import date
-
+from typing import Optional
 from pydantic import BaseModel
 
 
 class Location(BaseModel):
     name: str
-    house_number_street: int
-    street_name: str
-    city: str
-    county: str
-    postal_code: int
+    house_number_street: Optional[int] = None
+    street_name: Optional[str] = None
+    city: Optional[str] = None
+    country: Optional[str] = None
+    postal_code: Optional[int] = None
 
 
 class LocationResponse(Location):

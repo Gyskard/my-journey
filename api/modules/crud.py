@@ -9,7 +9,7 @@ def create_location(db: Session, location: schemas.Location):
         house_number_street=location.house_number_street,
         street_name=location.street_name,
         city=location.city,
-        county=location.county,
+        country=location.country,
         postal_code=location.postal_code
     )
     db.add(db_location)
@@ -22,7 +22,7 @@ def get_location_by_all_infos(db: Session, location: schemas.Location):
     return db.query(models.Location) \
         .filter(models.Location.name == location.name) \
         .filter(models.Location.city == location.city) \
-        .filter(models.Location.county == location.county) \
+        .filter(models.Location.country == location.country) \
         .filter(models.Location.postal_code == location.postal_code) \
         .filter(models.Location.street_name == location.street_name) \
         .filter(models.Location.house_number_street == location.house_number_street) \
