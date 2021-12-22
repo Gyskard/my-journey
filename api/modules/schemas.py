@@ -21,7 +21,7 @@ class LocationResponse(Location):
 
 class Person(BaseModel):
     first_name: str
-    last_name: str
+    last_name: Optional[str] = None
 
 
 class PersonResponse(Person):

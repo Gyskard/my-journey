@@ -13,7 +13,7 @@
               <v-btn small color="secondary" dark @click="location.dialog = !location.dialog">
                 Add a location
               </v-btn>
-              <v-btn class="ml-4" small color="secondary" dark>
+              <v-btn class="ml-4" small color="secondary" dark  @click="person.dialog = !person.dialog">
                 Add a person
               </v-btn>
             </v-container>
@@ -111,6 +111,33 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="person.dialog" max-width="500px">
+      <v-card>
+        <v-card-title>
+          Add a person
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="personForm" v-model="person.valid">
+            <v-text-field
+                v-model="person.form.firstName"
+                label="First name"
+                :rules="[rules.required(), rules.maxSize(20)]"
+            ></v-text-field>
+            <v-text-field
+                v-model="person.form.lastName"
+                label="Last name"
+                :rules="[rules.maxSize(50)]"
+            ></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="savePerson">
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -137,12 +164,20 @@ export default {
       dialog: null,
       valid: true,
       form: {
-        name: null,
+        name: "",
         houseNumberStreet: "",
         streetName: "",
         postalCode: "",
         city: "",
         country: "",
+      },
+    },
+    person: {
+      dialog: null,
+      valid: true,
+      form: {
+        firstName: "",
+        lastName: "",
       },
     },
     rules: {
@@ -177,6 +212,7 @@ export default {
         if (this.location.form.postalCode) json["postal_code"] = this.location.form.postalCode
         this.$http.put(this.$api + "/location", json)
             .then(() => {
+              this.resetLocationForm()
               this.$emit('display', {
                 timeout: 2000,
                 message: `The location ${json["name"]} has been created.`,
@@ -190,7 +226,60 @@ export default {
                 type: "error"
               })
             })
+      } else {
+        this.$emit('display', {
+          timeout: 2000,
+          message: `The form is not completed correctly.`,
+          type: "error"
+        })
       }
+    },
+    savePerson: function () {
+      this.$refs.personForm.validate()
+      if (this.person.valid) {
+        let json = {}
+        json["first_name"] = this.person.form.firstName
+        if (this.person.form.lastName) json["last_name"] = this.person.form.lastName
+        this.$http.put(this.$api + "/person", json)
+            .then(() => {
+              this.resetPersonForm()
+              const person = `${json["first_name"]} ${this.person.form.lastName ? json["last_name"].toUpperCase() : ""}`
+              this.$emit('display', {
+                timeout: 2000,
+                message: `The person ${person} has been created.`,
+                type: "info"
+              })
+            })
+            .catch((error) => {
+              this.$emit('display', {
+                timeout: 4000,
+                message: `An error occurred : "${error.response.data.detail}".`,
+                type: "error"
+              })
+            })
+      } else {
+        this.$emit('display', {
+          timeout: 2000,
+          message: `The form is not completed correctly.`,
+          type: "error"
+        })
+      }
+    },
+    resetLocationForm: function() {
+      this.$refs.locationForm.reset()
+      this.location.form.name = ""
+      this.location.form.postalCode = ""
+      this.location.form.country = ""
+      this.location.form.city = ""
+      this.location.form.streetName = ""
+      this.location.form.houseNumberStreet = ""
+      this.location.dialog = false
+    },
+    resetPersonForm: function() {
+      this.$refs.personForm.reset()
+      this.person.form.firstName = ""
+      this.person.form.lastName = ""
+      this.person.dialog = false
     },
   }
 }

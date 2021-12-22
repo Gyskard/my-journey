@@ -22,7 +22,7 @@ class Person(Base):
     __tablename__ = 'person'
 
     id = Column(Integer, primary_key=True, unique=True)
-    first_name = Column(String, nullable=False)
+    first_name = Column(String)
     last_name = Column(String)
 
     events = relationship('Event', secondary='participation', back_populates='persons')
