@@ -58,6 +58,10 @@ def get_person_by_all_infos(db: Session, person: schemas.Person):
         .first()
 
 
+def get_all_person(db: Session):
+    return db.query(models.Person).all()
+
+
 def get_person_by_id(db: Session, person_id: int):
     return db.query(models.Person).filter(models.Person.id == person_id).first()
 

@@ -50,8 +50,8 @@
             ></v-select>
             <v-combobox
                 v-model="event.form.selectedParticipants"
-                :items="event.form.participants"
-                label="Participant"
+                :items="event.form.persons"
+                :label="event.form.participantLabel"
                 multiple
                 chips
             ></v-combobox>
@@ -156,8 +156,9 @@ export default {
         date: "",
         locations: ['Location1', 'Location2'],
         selectedLocations: null,
-        participants: ['First_name1 LAST_NAME1', 'First_name2 LAST_NAME2'],
+        persons: ['First_name1 LAST_NAME1', 'First_name2 LAST_NAME2'],
         selectedParticipants: null,
+        participantLabel: "Participant"
       }
     },
     location: {
@@ -281,6 +282,28 @@ export default {
       this.person.form.lastName = ""
       this.person.dialog = false
     },
+    getPersons: function () {
+      this.$http.get(this.$api + "/person/all")
+          .then((response) => {
+            this.event.form.persons = []
+            for (const person of response.data) {
+              this.event.form.persons.push(
+                  `${person["first_name"]} ${person["last_name"] ? person["last_name"].toUpperCase() : ''}`
+              )
+            }
+          })
+          .catch((error) => {
+            this.$emit('display', {
+              timeout: 4000,
+              message: `An error occurred : "${error.response.data.detail}".`,
+              type: "error"
+            })
+          })
+    }
+  },
+
+  created() {
+    this.getPersons()
   }
 }
 </script>

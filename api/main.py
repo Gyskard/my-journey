@@ -2,6 +2,7 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_responses import custom_openapi
 from sqlalchemy.orm import Session
+from typing import List
 
 from modules import models, crud, schemas
 from modules.database import SessionLocal, engine
@@ -104,6 +105,12 @@ async def get_person_by_all_infos(person: schemas.Person, db: Session = Depends(
     if not db_person:
         raise HTTPException(status_code=404, detail="Person not exists")
     return db_person
+
+
+@app.get("/person/all", tags=["person"], response_model=List[schemas.PersonResponse])
+async def get_all_person(db: Session = Depends(get_db)):
+    db_all_person = crud.get_all_person(db=db)
+    return db_all_person
 
 
 @app.get("/person/{person_id}", tags=["person"], response_model=schemas.PersonResponse)
