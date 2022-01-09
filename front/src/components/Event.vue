@@ -30,7 +30,7 @@
       </div>
       <br/>
       <div>
-        <b>Location</b> : {{ formatLocationToDisplay(event.location) }}
+        <b>Location</b> : {{ this.$locationFormat(event.location) }}
       </div>
     </v-expansion-panel-content>
   </v-expansion-panel>
@@ -51,18 +51,6 @@ export default {
     formatPersonsListToDisplay: function(persons) {
       let result = ""
       for (const person of persons) result += `${result !== "" ? ", " : ""}${this.formatPerson(person)}`
-      return result
-    },
-    formatLocationToDisplay: function(location) {
-      let result = location["name"]
-      delete location["name"]
-      if (Object.values(location).some(elm => elm !== null)) {
-        result += " ("
-        for (const elm of ["house_number_street", "street_name", "postal_code", "city", "country"]) {
-          result += `${location[elm] !== null ? location[elm] : ""}, `
-        }
-        result = result.slice(0,-2) + ")"
-      }
       return result
     }
   }

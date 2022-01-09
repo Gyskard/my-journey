@@ -65,7 +65,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="cancelForm('event')">
+          <v-btn color="primary" text @click="resetForm('event')">
             Cancel
           </v-btn>
           <v-btn color="primary" text @click="event.dialog = false">
@@ -121,7 +121,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="cancelForm('location')">
+          <v-btn color="primary" text @click="resetForm('location')">
             Cancel
           </v-btn>
           <v-btn color="primary" text @click="saveLocation">
@@ -153,7 +153,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="cancelForm('person')">
+          <v-btn color="primary" text @click="resetForm('person')">
             Cancel
           </v-btn>
           <v-btn color="primary" text @click="savePerson">
@@ -242,7 +242,7 @@ export default {
         if (this.location.form.postalCode) json["postal_code"] = this.location.form.postalCode
         this.$http.put(this.$api + "/location", json)
             .then(() => {
-              this.resetLocationForm()
+              this.resetForm("location")
               this.$emit('display', {
                 timeout: 2000,
                 message: `The location ${json["name"]} has been created.`,
@@ -272,13 +272,14 @@ export default {
         if (this.person.form.lastName) json["last_name"] = this.person.form.lastName
         this.$http.put(this.$api + "/person", json)
             .then(() => {
-              this.resetPersonForm()
               const person = `${json["first_name"]} ${this.person.form.lastName ? json["last_name"].toUpperCase() : ""}`
+              this.resetForm("person")
               this.$emit('display', {
                 timeout: 2000,
                 message: `The person ${person} has been created.`,
                 type: "info"
               })
+              this.getPersons()
             })
             .catch((error) => {
               this.$emit('display', {
@@ -294,22 +295,6 @@ export default {
           type: "error"
         })
       }
-    },
-    resetLocationForm: function() {
-      this.$refs.locationForm.reset()
-      this.location.form.name = ""
-      this.location.form.postalCode = ""
-      this.location.form.country = ""
-      this.location.form.city = ""
-      this.location.form.streetName = ""
-      this.location.form.houseNumberStreet = ""
-      this.location.dialog = false
-    },
-    resetPersonForm: function() {
-      this.$refs.personForm.reset()
-      this.person.form.firstName = ""
-      this.person.form.lastName = ""
-      this.person.dialog = false
     },
     getPersons: function () {
       this.$http.get(this.$api + "/person/all")
@@ -329,7 +314,24 @@ export default {
             })
           })
     },
-    cancelForm: function (form) {
+    getLocations: function () {
+      this.$http.get(this.$api + "/location/all")
+          .then((response) => {
+            this.event.form.locations = []
+            for (const location of response.data) {
+              this.event.form.locations.push(this.$locationFormat(location))
+            }
+          })
+          .catch((error) => {
+            console.log(error)
+            this.$emit('display', {
+              timeout: 4000,
+              message: `An error occurred : "${error.response.data.detail}".`,
+              type: "error"
+            })
+          })
+    },
+    resetForm: function (form) {
       switch (form) {
         case "event":
           this.$refs.eventForm.reset()
@@ -351,6 +353,7 @@ export default {
 
   created() {
     this.getPersons()
+    this.getLocations()
   }
 }
 </script>

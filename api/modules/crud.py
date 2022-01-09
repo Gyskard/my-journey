@@ -33,6 +33,10 @@ def get_location_by_id(db: Session, location_id: int):
     return db.query(models.Location).filter(models.Location.id == location_id).first()
 
 
+def get_all_location(db: Session):
+    return db.query(models.Location).all()
+
+
 def delete_location_by_id(db: Session, location_id: int):
     db_location = db.query(models.Location).filter(models.Location.id == location_id).first()
     db.delete(db_location)

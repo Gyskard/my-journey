@@ -68,6 +68,12 @@ async def get_location_by_all_infos(location: schemas.Location, db: Session = De
     return db_location
 
 
+@app.get("/location/all", tags=["location"], response_model=List[schemas.LocationResponse])
+async def get_all_location(db: Session = Depends(get_db)):
+    db_all_location = crud.get_all_location(db=db)
+    return db_all_location
+
+
 @app.get("/location/{location_id}", tags=["location"], response_model=schemas.LocationResponse)
 async def get_location_by_id(location_id: int, db: Session = Depends(get_db)):
     db_location = crud.get_location_by_id(db=db, location_id=location_id)
