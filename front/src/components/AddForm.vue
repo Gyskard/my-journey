@@ -17,48 +17,57 @@
                 Add a person
               </v-btn>
             </v-container>
-            <v-text-field v-model="event.form.name" label="Name" required></v-text-field>
-            <v-text-field v-model="event.form.description" label="Description"></v-text-field>
-            <v-menu
-                v-model="menu"
-                :close-on-content-click="false"
-                :nudge-right="40"
-                transition="scale-transition"
-                offset-y
-                min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                    v-model="dateFormat"
-                    label="Date"
-                    readonly
-                    v-bind="attrs"
-                    v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                  v-model="event.form.date"
-                  @input="event.dateMenu = false"
-                  no-title color="orange darken-1"
-              ></v-date-picker>
-            </v-menu>
-            <v-select
-                v-model="event.form.selectedLocations"
-                :items="event.form.locations"
-                label="Location"
-                required
-            ></v-select>
-            <v-combobox
-                v-model="event.form.selectedParticipants"
-                :items="event.form.persons"
-                :label="event.form.participantLabel"
-                multiple
-                chips
-            ></v-combobox>
+            <v-form ref="eventForm">
+              <v-text-field v-model="event.form.name" label="Name" required clearable></v-text-field>
+              <v-text-field v-model="event.form.description" label="Description" clearable></v-text-field>
+              <v-menu
+                  v-model="menu"
+                  :close-on-content-click="false"
+                  :nudge-right="40"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="auto"
+                  clearable
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                      v-model="dateFormat"
+                      label="Date"
+                      readonly
+                      v-bind="attrs"
+                      v-on="on"
+                      clearable
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                    v-model="event.form.date"
+                    @input="event.dateMenu = false"
+                    no-title color="orange darken-1"
+                ></v-date-picker>
+              </v-menu>
+              <v-select
+                  v-model="event.form.selectedLocations"
+                  :items="event.form.locations"
+                  label="Location"
+                  required
+                  clearable
+              ></v-select>
+              <v-combobox
+                  v-model="event.form.selectedParticipants"
+                  :items="event.form.persons"
+                  :label="event.form.participantLabel"
+                  multiple
+                  chips
+                  clearable
+              ></v-combobox>
+            </v-form>
           </v-container>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="cancelForm('event')">
+            Cancel
+          </v-btn>
           <v-btn color="primary" text @click="event.dialog = false">
             Save
           </v-btn>
@@ -76,35 +85,45 @@
                 v-model="location.form.name"
                 label="Name"
                 :rules="[rules.required(), rules.maxSize(50)]"
+                clearable
             ></v-text-field>
             <v-text-field
                 v-model="location.form.houseNumberStreet"
                 label="House number street"
                 :rules="[rules.maxSize(7), rules.onlyNumbers()]"
+                clearable
             ></v-text-field>
             <v-text-field
                 v-model="location.form.streetName"
                 label="Street name"
                 :rules="[rules.maxSize(25)]"
+                clearable
             ></v-text-field>
             <v-text-field
                 v-model="location.form.postalCode"
                 label="Postal code"
                 :rules="[rules.maxSize(7), rules.onlyNumbers()]"
+                clearable
             ></v-text-field>
             <v-text-field
                 v-model="location.form.city"
                 label="City"
                 :rules="[rules.maxSize(75)]"
+                clearable
             ></v-text-field>
             <v-text-field
                 v-model="location.form.country"
                 label="Country"
-                :rules="[rules.maxSize(50)]"></v-text-field>
+                :rules="[rules.maxSize(50)]"
+                clearable
+            ></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="cancelForm('location')">
+            Cancel
+          </v-btn>
           <v-btn color="primary" text @click="saveLocation">
             Save
           </v-btn>
@@ -122,16 +141,21 @@
                 v-model="person.form.firstName"
                 label="First name"
                 :rules="[rules.required(), rules.maxSize(20)]"
+                clearable
             ></v-text-field>
             <v-text-field
                 v-model="person.form.lastName"
                 label="Last name"
                 :rules="[rules.maxSize(50)]"
+                clearable
             ></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="cancelForm('person')">
+            Cancel
+          </v-btn>
           <v-btn color="primary" text @click="savePerson">
             Save
           </v-btn>
@@ -151,8 +175,8 @@ export default {
       dialog: false,
       dateMenu: false,
       form: {
-        name: "",
-        description: "",
+        name: null,
+        description: null,
         date: "",
         locations: ['Location1', 'Location2'],
         selectedLocations: null,
@@ -165,21 +189,21 @@ export default {
       dialog: null,
       valid: true,
       form: {
-        name: "",
-        houseNumberStreet: "",
-        streetName: "",
-        postalCode: "",
-        city: "",
-        country: "",
+        name: null,
+        houseNumberStreet: null,
+        streetName: null,
+        postalCode: null,
+        city: null,
+        country: null,
       },
     },
     person: {
       dialog: null,
       valid: true,
       form: {
-        firstName: "",
-        lastName: "",
-      },
+        firstName: null,
+        lastName: null,
+      }
     },
     rules: {
       required() {
@@ -195,8 +219,13 @@ export default {
   }),
 
   computed: {
-    dateFormat: function () {
-      return this.event.form.date !== "" ?  this.$dateFormat(this.event.form.date) : ""
+    dateFormat: {
+      get: function () {
+        return this.event.form.date !== "" ?  this.$dateFormat(this.event.form.date) : ""
+      },
+      set: function () {
+        this.event.form.date = ""
+      }
     }
   },
 
@@ -299,6 +328,24 @@ export default {
               type: "error"
             })
           })
+    },
+    cancelForm: function (form) {
+      switch (form) {
+        case "event":
+          this.$refs.eventForm.reset()
+          this.event.dialog = false
+          break
+        case "location":
+          this.$refs.locationForm.reset()
+          this.location.dialog = false
+          break
+        case "person":
+          this.$refs.personForm.reset()
+          this.person.dialog = false
+          break
+        default:
+          break;
+      }
     }
   },
 
