@@ -32,10 +32,10 @@ class Event(Base):
     __tablename__ = 'event'
 
     id = Column(Integer, primary_key=True, unique=True)
-    name = Column(String, nullable=False)
+    event_name = Column(String)
     description = Column(String)
-    date = Column(Date, nullable=False)
-    location_id = Column(ForeignKey('location.id'), nullable=False)
+    date = Column(Date)
+    location_id = Column(ForeignKey('location.id'))
 
     location = relationship('Location')
     persons = relationship('Person', secondary='participation', back_populates='events')

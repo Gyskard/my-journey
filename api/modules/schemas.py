@@ -32,8 +32,8 @@ class PersonResponse(Person):
 
 
 class Event(BaseModel):
-    name: str
-    description: str
+    event_name: str
+    description: Optional[str] = None
     date: date
     location_id: int
 

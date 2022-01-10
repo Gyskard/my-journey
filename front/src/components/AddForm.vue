@@ -17,9 +17,18 @@
                 Add a person
               </v-btn>
             </v-container>
-            <v-form ref="eventForm">
-              <v-text-field v-model="event.form.name" label="Name" required clearable></v-text-field>
-              <v-text-field v-model="event.form.description" label="Description" clearable></v-text-field>
+            <v-form ref="eventForm" v-model="event.valid">
+              <v-text-field
+                  v-model="event.form.name"
+                  label="Name" required clearable
+                  :rules="[rules.required(), rules.maxSize(50)]"
+              ></v-text-field>
+              <v-text-field
+                  v-model="event.form.description"
+                  label="Description"
+                  clearable
+                  :rules="[rules.maxSize(100)]"
+              ></v-text-field>
               <v-menu
                   v-model="menu"
                   :close-on-content-click="false"
@@ -37,6 +46,7 @@
                       v-bind="attrs"
                       v-on="on"
                       clearable
+                      :rules="[rules.required()]"
                   ></v-text-field>
                 </template>
                 <v-date-picker
@@ -51,15 +61,17 @@
                   label="Location"
                   required
                   clearable
+                  :rules="[rules.required()]"
               ></v-select>
-              <v-combobox
+              <v-autocomplete
                   v-model="event.form.selectedParticipants"
                   :items="event.form.persons"
                   :label="event.form.participantLabel"
                   multiple
                   chips
                   clearable
-              ></v-combobox>
+                  :rules="[rules.required()]"
+              ></v-autocomplete>
             </v-form>
           </v-container>
         </v-card-text>
@@ -68,7 +80,7 @@
           <v-btn color="primary" text @click="resetForm('event')">
             Cancel
           </v-btn>
-          <v-btn color="primary" text @click="event.dialog = false">
+          <v-btn color="primary" text @click="saveEvent">
             Save
           </v-btn>
         </v-card-actions>
@@ -174,13 +186,14 @@ export default {
     event: {
       dialog: false,
       dateMenu: false,
+      valid: true,
       form: {
         name: null,
         description: null,
         date: "",
-        locations: ['Location1', 'Location2'],
+        locations: "",
         selectedLocations: null,
-        persons: ['First_name1 LAST_NAME1', 'First_name2 LAST_NAME2'],
+        persons: [],
         selectedParticipants: null,
         participantLabel: "Participant"
       }
@@ -207,7 +220,7 @@ export default {
     },
     rules: {
       required() {
-        return v => !!v || 'Name is required'
+        return v => !!v || 'This field is required'
       },
       maxSize(size) {
         return v => (v || '').length <= size || `A maximum of ${size} characters is allowed`
@@ -230,6 +243,17 @@ export default {
   },
 
   methods: {
+    saveEvent: function() {
+      this.$refs.eventForm.validate()
+      if (this.event.valid) {
+        let json = {}
+        json["event_name"] = this.event.form.name
+        if (this.event.form.description) json["description"] = this.event.form.description
+        if (this.event.form.date) json["date"] = this.event.form.date
+        if (this.event.form.locations) json["location_id"] = this.event.form.locations
+        console.log(json)
+      }
+    },
     saveLocation: function () {
       this.$refs.locationForm.validate()
       if (this.location.valid) {
