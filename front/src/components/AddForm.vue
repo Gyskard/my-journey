@@ -58,6 +58,8 @@
               <v-select
                   v-model="event.form.selectedLocations"
                   :items="event.form.locations"
+                  :item-text="item => this.$locationFormat(item)"
+                  item-value="id"
                   label="Location"
                   required
                   clearable
@@ -246,12 +248,28 @@ export default {
     saveEvent: function() {
       this.$refs.eventForm.validate()
       if (this.event.valid) {
-        let json = {}
-        json["event_name"] = this.event.form.name
+        let json = {
+          event_name: this.event.form.name,
+          date: this.event.form.date,
+          location_id: this.event.form.selectedLocations
+        }
         if (this.event.form.description) json["description"] = this.event.form.description
-        if (this.event.form.date) json["date"] = this.event.form.date
-        if (this.event.form.locations) json["location_id"] = this.event.form.locations
-        console.log(json)
+        this.$http.put(this.$api + "/event", json)
+            .then(() => {
+              this.resetForm("event")
+              this.$emit('display', {
+                timeout: 2000,
+                message: `The event ${json["event_name"]} has been created.`,
+                type: "info"
+              })
+            })
+            .catch((error) => {
+              this.$emit('display', {
+                timeout: 4000,
+                message: `An error occurred : "${error.response.data.detail}".`,
+                type: "error"
+              })
+            })
       }
     },
     saveLocation: function () {
@@ -343,11 +361,10 @@ export default {
           .then((response) => {
             this.event.form.locations = []
             for (const location of response.data) {
-              this.event.form.locations.push(this.$locationFormat(location))
+              this.event.form.locations.push(location)
             }
           })
           .catch((error) => {
-            console.log(error)
             this.$emit('display', {
               timeout: 4000,
               message: `An error occurred : "${error.response.data.detail}".`,

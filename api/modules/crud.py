@@ -79,6 +79,7 @@ def delete_person_by_id(db: Session, person_id: int):
 
 def create_event(db: Session, event: schemas.Event):
     db_event = models.Event(
+        event_name=event.event_name,
         description=event.description,
         date=event.date,
         location_id=event.location_id
@@ -103,6 +104,14 @@ def create_participation(db: Session, participation: schemas.Participation):
 def get_event(db: Session, event_id: int):
     return db.query(models.Event).filter(models.Event.id == event_id).first()
 
+
+def get_event_by_all_infos(db: Session, event: schemas.Event):
+    return db.query(models.Event) \
+        .filter(models.Event.event_name == event.event_name) \
+        .filter(models.Event.description == event.description) \
+        .filter(models.Event.date == event.date) \
+        .filter(models.Event.location_id == event.location_id) \
+        .first()
 
 def get_person_by_event(db: Session, event_id: int):
     db_person_event = []
