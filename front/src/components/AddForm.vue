@@ -68,6 +68,8 @@
               <v-autocomplete
                   v-model="event.form.selectedParticipants"
                   :items="event.form.persons"
+                  item-text="displayName"
+                  item-value="id"
                   :label="event.form.participantLabel"
                   multiple
                   chips
@@ -248,20 +250,42 @@ export default {
     saveEvent: function() {
       this.$refs.eventForm.validate()
       if (this.event.valid) {
-        let json = {
+        let jsonEvent = {
           event_name: this.event.form.name,
           date: this.event.form.date,
           location_id: this.event.form.selectedLocations
         }
-        if (this.event.form.description) json["description"] = this.event.form.description
-        this.$http.put(this.$api + "/event", json)
-            .then(() => {
+        if (this.event.form.description) jsonEvent["description"] = this.event.form.description
+        this.$http.put(this.$api + "/event", jsonEvent)
+            .then((resEvent) => {
+              console.log(resEvent)
+              for (const person of this.event.form.persons) {
+                console.log(person)
+              }
+              let jsonParticipation = {
+                event_id: resEvent.data,
+                person_id: this.event.form.persons
+              }
+              this.$http.put(this.$api + "/participation", jsonParticipation)
+                .then(() => {
+                  console.log("test")
+                })
+
+              /*
+
+              Complete function and improve participation create endpoint with array in input
+
+               */
+
+
+              /*
               this.resetForm("event")
               this.$emit('display', {
                 timeout: 2000,
-                message: `The event ${json["event_name"]} has been created.`,
+                message: `The event ${jsonEvent["event_name"]} has been created.`,
                 type: "info"
               })
+               */
             })
             .catch((error) => {
               this.$emit('display', {
@@ -343,9 +367,10 @@ export default {
           .then((response) => {
             this.event.form.persons = []
             for (const person of response.data) {
-              this.event.form.persons.push(
-                  `${person["first_name"]} ${person["last_name"] ? person["last_name"].toUpperCase() : ''}`
-              )
+              this.event.form.persons.push({
+                id: person.id,
+                displayName: `${person["first_name"]} ${person["last_name"] ? person["last_name"].toUpperCase() : ''}`
+              })
             }
           })
           .catch((error) => {

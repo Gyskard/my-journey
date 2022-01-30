@@ -164,7 +164,7 @@ async def create_event(event: schemas.Event, db: Session = Depends(get_db)):
     db_event = crud.create_event(db=db, event=event)
     if not db_event:
         raise HTTPException(status_code=500, detail="Event not created")
-    return status.HTTP_201_CREATED
+    return db_event.id
 
 
 @app.get("/event/{event_id}", tags=["event"], response_model=schemas.EventResponse)
