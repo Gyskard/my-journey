@@ -91,14 +91,17 @@ def create_event(db: Session, event: schemas.Event):
 
 
 def create_participation(db: Session, participation: schemas.Participation):
-    db_participation = models.Participation(
-        event_id=participation.event_id,
-        person_id=participation.person_id
-    )
-    db.add(db_participation)
-    db.commit()
-    db.refresh(db_participation)
-    return db_participation
+    db_all_participation = []
+    for participant in participation.person_id_list:
+        db_participation = models.Participation(
+            event_id=participation.event_id,
+            person_id=participant
+        )
+        db.add(db_participation)
+        db.commit()
+        db.refresh(db_participation)
+        db_all_participation.append(db_participation)
+    return db_all_participation
 
 
 def get_event(db: Session, event_id: int):

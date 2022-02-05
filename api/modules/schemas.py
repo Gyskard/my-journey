@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
 
 
@@ -48,3 +48,8 @@ class EventResponse(Event):
 class Participation(BaseModel):
     event_id: int
     person_id: int
+
+
+class ParticipationRequest(BaseModel):
+    event_id: int
+    person_id_list: List[int]

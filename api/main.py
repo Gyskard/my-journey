@@ -197,16 +197,17 @@ async def delete_event(event_id: int, db: Session = Depends(get_db)):
 
 
 @app.put("/participation", tags=["participation"], status_code=201)
-async def create_participation(participation: schemas.Participation, db: Session = Depends(get_db)):
-    db_person = crud.get_person_by_id(db=db, person_id=participation.person_id)
-    if not db_person:
-        raise HTTPException(status_code=404, detail="Person not exists")
+async def create_participation(participation: schemas.ParticipationRequest, db: Session = Depends(get_db)):
     db_event = crud.get_event(db=db, event_id=participation.event_id)
     if not db_event:
         raise HTTPException(status_code=404, detail="Event not exists")
     db_person_event = crud.get_person_by_event(db=db, event_id=participation.event_id)
-    if participation.person_id in db_person_event:
-        raise HTTPException(status_code=400, detail="Participation already exists")
+    for participant in participation.person_id_list:
+        db_person = crud.get_person_by_id(db=db, person_id=participant)
+        if not db_person:
+            raise HTTPException(status_code=404, detail="Person not exists")
+        if participant in db_person_event:
+            raise HTTPException(status_code=400, detail="Participation already exists")
     db_participation = crud.create_participation(db=db, participation=participation)
     if not db_participation:
         raise HTTPException(status_code=500, detail="Participation not created")

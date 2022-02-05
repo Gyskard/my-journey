@@ -258,41 +258,25 @@ export default {
         if (this.event.form.description) jsonEvent["description"] = this.event.form.description
         this.$http.put(this.$api + "/event", jsonEvent)
             .then((resEvent) => {
-              console.log(resEvent)
+              let personIdList = []
               for (const person of this.event.form.persons) {
-                console.log(person)
+                personIdList.push(person.id)
               }
               let jsonParticipation = {
                 event_id: resEvent.data,
-                person_id: this.event.form.persons
+                person_id_list: personIdList
               }
               this.$http.put(this.$api + "/participation", jsonParticipation)
                 .then(() => {
-                  console.log("test")
+                  this.resetForm("event")
+                  this.displaySuccessMessage(`The event ${jsonEvent["event_name"]} has been created.`)
                 })
-
-              /*
-
-              Complete function and improve participation create endpoint with array in input
-
-               */
-
-
-              /*
-              this.resetForm("event")
-              this.$emit('display', {
-                timeout: 2000,
-                message: `The event ${jsonEvent["event_name"]} has been created.`,
-                type: "info"
-              })
-               */
+                .catch((error) => {
+                  this.displayErrorMessage(error.response.data.detail)
+                })
             })
             .catch((error) => {
-              this.$emit('display', {
-                timeout: 4000,
-                message: `An error occurred : "${error.response.data.detail}".`,
-                type: "error"
-              })
+              this.displayErrorMessage(error.response.data.detail)
             })
       }
     },
@@ -309,25 +293,13 @@ export default {
         this.$http.put(this.$api + "/location", json)
             .then(() => {
               this.resetForm("location")
-              this.$emit('display', {
-                timeout: 2000,
-                message: `The location ${json["name"]} has been created.`,
-                type: "info"
-              })
+              this.displaySuccessMessage(`The location ${json["name"]} has been created.`)
             })
             .catch((error) => {
-              this.$emit('display', {
-                timeout: 4000,
-                message: `An error occurred : "${error.response.data.detail}".`,
-                type: "error"
-              })
+              this.displayErrorMessage(error.response.data.detail)
             })
       } else {
-        this.$emit('display', {
-          timeout: 2000,
-          message: `The form is not completed correctly.`,
-          type: "error"
-        })
+        this.displayErrorMessage('The form is not completed correctly.')
       }
     },
     savePerson: function () {
@@ -340,26 +312,14 @@ export default {
             .then(() => {
               const person = `${json["first_name"]} ${this.person.form.lastName ? json["last_name"].toUpperCase() : ""}`
               this.resetForm("person")
-              this.$emit('display', {
-                timeout: 2000,
-                message: `The person ${person} has been created.`,
-                type: "info"
-              })
+              this.displaySuccessMessage(`The person ${person} has been created.`)
               this.getPersons()
             })
             .catch((error) => {
-              this.$emit('display', {
-                timeout: 4000,
-                message: `An error occurred : "${error.response.data.detail}".`,
-                type: "error"
-              })
+              this.displayErrorMessage(error.response.data.detail)
             })
       } else {
-        this.$emit('display', {
-          timeout: 2000,
-          message: `The form is not completed correctly.`,
-          type: "error"
-        })
+        this.displayErrorMessage('The form is not completed correctly.')
       }
     },
     getPersons: function () {
@@ -374,11 +334,7 @@ export default {
             }
           })
           .catch((error) => {
-            this.$emit('display', {
-              timeout: 4000,
-              message: `An error occurred : "${error.response.data.detail}".`,
-              type: "error"
-            })
+            this.displayErrorMessage(error.response.data.detail)
           })
     },
     getLocations: function () {
@@ -390,11 +346,7 @@ export default {
             }
           })
           .catch((error) => {
-            this.$emit('display', {
-              timeout: 4000,
-              message: `An error occurred : "${error.response.data.detail}".`,
-              type: "error"
-            })
+            this.displayErrorMessage(error.response.data.detail)
           })
     },
     resetForm: function (form) {
@@ -414,6 +366,20 @@ export default {
         default:
           break;
       }
+    },
+    displaySuccessMessage: function(msg) {
+      this.$emit('display', {
+        timeout: 2000,
+        message: msg,
+        type: "info"
+      })
+    },
+    displayErrorMessage: function(msg) {
+      this.$emit('display', {
+        timeout: 4000,
+        message: `An error occurred : "${msg}".`,
+        type: "error"
+      })
     }
   },
 
