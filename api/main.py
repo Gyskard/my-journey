@@ -175,6 +175,14 @@ async def get_event(event_id: int, db: Session = Depends(get_db)):
     return db_event
 
 
+@app.post("/event/all", tags=["event"], response_model=schemas.EventListResponse)
+async def get_all_event(filter: schemas.Filter, db: Session = Depends(get_db)):
+    db_list_event = crud.get_all_event(db=db, filter=filter)
+    if db_list_event is None:
+        raise HTTPException(status_code=404, detail="No events exist with these filters")
+    return db_list_event
+
+
 @app.get("/event/person/{event_id}", tags=["event"], response_model=list)
 async def get_person_by_event(event_id: int, db: Session = Depends(get_db)):
     db_event = crud.get_event(db=db, event_id=event_id)

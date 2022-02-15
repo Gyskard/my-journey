@@ -108,6 +108,8 @@ def get_event(db: Session, event_id: int):
     return db.query(models.Event).filter(models.Event.id == event_id).first()
 
 
+
+# Need to be included in get_all_event
 def get_event_by_all_infos(db: Session, event: schemas.Event):
     return db.query(models.Event) \
         .filter(models.Event.event_name == event.event_name) \
@@ -115,6 +117,12 @@ def get_event_by_all_infos(db: Session, event: schemas.Event):
         .filter(models.Event.date == event.date) \
         .filter(models.Event.location_id == event.location_id) \
         .first()
+
+
+def get_all_event(db: Session, filter: schemas.Filter):
+    print(filter.sort_by)
+    print(filter.order_by)
+    return None
 
 def get_person_by_event(db: Session, event_id: int):
     db_person_event = []

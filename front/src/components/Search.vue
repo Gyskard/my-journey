@@ -64,11 +64,11 @@
       search: "",
       dates: null,
       menu: false,
-      sort: null,
+      sort: "Date",
       sortMethods: ["Name", "Date", "Location"],
-      order: null,
+      order: "Descending",
       orderMethods: ["Ascending", "Descending"],
-      orderIcon: "mdi-arrow-top-right-thin"
+      orderIcon: "mdi-rotate-90 mdi-arrow-top-right-thin"
     }),
 
     computed: {
