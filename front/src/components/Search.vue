@@ -36,15 +36,6 @@
       </v-col>
       <v-col>
         <v-select
-            v-model="sort"
-            :items="sortMethods"
-            label="Sort by"
-            prepend-icon="mdi-sort-reverse-variant"
-            clearable
-        ></v-select>
-      </v-col>
-      <v-col>
-        <v-select
             v-model="order"
             :items="orderMethods"
             label="Order by"
@@ -64,8 +55,6 @@
       search: "",
       dates: null,
       menu: false,
-      sort: "Date",
-      sortMethods: ["Name", "Date", "Location"],
       order: "Descending",
       orderMethods: ["Ascending", "Descending"],
       orderIcon: "mdi-rotate-90 mdi-arrow-top-right-thin"

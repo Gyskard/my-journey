@@ -44,14 +44,6 @@ class EventResponse(Event):
     class Config:
         orm_mode = True
 
-
-class EventListResponse(BaseModel):
-    event_list: List[int]
-
-    class Config:
-        orm_mode = True
-
-
 class Participation(BaseModel):
     event_id: int
     person_id: int
@@ -63,5 +55,7 @@ class ParticipationRequest(BaseModel):
 
 
 class Filter(BaseModel):
+    search: Optional[str] = None
+    date: Optional[str] = None
     sort_by: Optional[str] = None
     order_by: Optional[str] = None

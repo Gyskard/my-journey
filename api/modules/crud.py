@@ -108,7 +108,6 @@ def get_event(db: Session, event_id: int):
     return db.query(models.Event).filter(models.Event.id == event_id).first()
 
 
-
 # Need to be included in get_all_event
 def get_event_by_all_infos(db: Session, event: schemas.Event):
     return db.query(models.Event) \
@@ -120,9 +119,17 @@ def get_event_by_all_infos(db: Session, event: schemas.Event):
 
 
 def get_all_event(db: Session, filter: schemas.Filter):
-    print(filter.sort_by)
-    print(filter.order_by)
-    return None
+    events = db.query(models.Event.id)
+    if (filter.search is not None):
+        events = events.filter(models.Event.event_name.contains(filter.search))
+    if (filter.date is not None):
+        events = events.filter(models.Event.date == filter.date)
+    events = events.all()
+    result = []
+    for event in events:
+        result.append(event[0])
+    return result
+
 
 def get_person_by_event(db: Session, event_id: int):
     db_person_event = []

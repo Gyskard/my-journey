@@ -49,6 +49,8 @@ def get_db():
         db.close()
 
 
+# need to check if each date is out of range
+
 @app.put("/location", tags=["location"], status_code=201)
 async def create_location(location: schemas.Location, db: Session = Depends(get_db)):
     db_location = crud.get_location_by_all_infos(db=db, location=location)
@@ -174,8 +176,9 @@ async def get_event(event_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Event not exists")
     return db_event
 
+# need to check value of sort_by and order_by
 
-@app.post("/event/all", tags=["event"], response_model=schemas.EventListResponse)
+@app.post("/event/all", tags=["event"], response_model=List[int])
 async def get_all_event(filter: schemas.Filter, db: Session = Depends(get_db)):
     db_list_event = crud.get_all_event(db=db, filter=filter)
     if db_list_event is None:
