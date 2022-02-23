@@ -38,7 +38,7 @@
         <v-select
             v-model="order"
             :items="orderMethods"
-            label="Order by"
+            label="Order by (date)"
             :prepend-icon="orderIcon"
             clearable
         ></v-select>

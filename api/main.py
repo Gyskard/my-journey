@@ -176,7 +176,6 @@ async def get_event(event_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Event not exists")
     return db_event
 
-# need to check value of sort_by and order_by
 
 @app.post("/event/all", tags=["event"], response_model=List[int])
 async def get_all_event(filter: schemas.Filter, db: Session = Depends(get_db)):

@@ -1,6 +1,6 @@
 from datetime import date
 from typing import Optional, List
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class Location(BaseModel):
@@ -57,5 +57,10 @@ class ParticipationRequest(BaseModel):
 class Filter(BaseModel):
     search: Optional[str] = None
     date: Optional[str] = None
-    sort_by: Optional[str] = None
-    order_by: Optional[str] = None
+    order_by: str
+
+    @validator('order_by')
+    def order_by_must_have_valid_value(cls, v):
+        if v not in ["ascending", "descending"]:
+            raise ValueError('must have ascending or descending value')
+        return v
