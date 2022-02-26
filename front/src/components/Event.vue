@@ -13,7 +13,7 @@
             <v-col cols="4">
               {{ event.location.name }}
             </v-col>
-            <v-col cols="4">
+            <v-col cols="4" v-if="event.persons.length > 0">
               {{ event.persons.length }} {{ event.persons.length === 1 ? "participant" : "participants" }}
             </v-col>
           </v-row>
@@ -21,17 +21,19 @@
       </v-row>
     </v-expansion-panel-header>
     <v-expansion-panel-content>
-      <div class="mt-4"> <!-- used div to prevent visual bug when defocusing -->
-        {{ event.description }}
-      </div>
-      <br/>
-      <div>
-        <b>{{ event.persons.length === 1 ? "Participant" : "Participants" }}</b> : {{ formatPersonsListToDisplay(event.persons) }}
-      </div>
-      <br/>
-      <div>
-        <b>Location</b> : {{ this.$locationFormat(event.location) }}
-      </div>
+      <v-card>
+        <v-card-text>
+          <p class="text-h6 text--primary">
+            {{ event.event_name }}
+          </p>
+          <p v-if="event.description">{{ event.description }}</p>
+          <v-chip-group column v-if="event.persons.length > 0" active-class="secondary">
+            <v-chip class="secondary accent-4 white--text" v-for="person in event.persons" :key="person">
+              {{ formatPerson(person) }}
+            </v-chip>
+          </v-chip-group>
+        </v-card-text>
+      </v-card>
     </v-expansion-panel-content>
   </v-expansion-panel>
 </template>
@@ -56,3 +58,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.v-card {
+  box-shadow: none !important;
+}
+</style>
