@@ -44,6 +44,7 @@ class EventResponse(Event):
     class Config:
         orm_mode = True
 
+
 class Participation(BaseModel):
     event_id: int
     person_id: int

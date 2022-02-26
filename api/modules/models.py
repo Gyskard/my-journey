@@ -37,8 +37,8 @@ class Event(Base):
     date = Column(Date)
     location_id = Column(ForeignKey('location.id'))
 
-    location = relationship('Location')
-    persons = relationship('Person', secondary='participation', back_populates='events')
+    location = relationship('Location', lazy='joined')
+    persons = relationship('Person', secondary='participation', back_populates='events', lazy='joined')
 
 
 class Participation(Base):

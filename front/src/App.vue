@@ -7,7 +7,7 @@
     </v-app-bar>
     <v-main>
       <Search class="mt-4" style="max-width: 75em;"/>
-      <List class="d-flex justify-center mt-3"/>
+      <List class="d-flex justify-center mt-3" @display="setDisplay"/>
     </v-main>
     <SnackBar :display="display"/>
   </v-app>

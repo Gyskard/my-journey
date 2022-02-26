@@ -3,7 +3,7 @@
     <v-expansion-panel-header>
       <v-row no-gutters>
         <v-col cols="4">
-          {{ event.name }}
+          {{ event.event_name }}
         </v-col>
         <v-col cols="8" class="text--secondary">
           <v-row>

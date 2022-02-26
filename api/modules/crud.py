@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, undefer
 
 from . import models, schemas
 
@@ -119,7 +119,8 @@ def get_event_by_all_infos(db: Session, event: schemas.Event):
 
 
 def get_all_event(db: Session, filter: schemas.Filter):
-    events = db.query(models.Event.id)
+
+    events = db.query(models.Event)
     if filter.search is not None:
         events = events.filter(models.Event.event_name.contains(filter.search))
     if filter.date is not None:
@@ -129,10 +130,9 @@ def get_all_event(db: Session, filter: schemas.Filter):
     elif filter.order_by == "descending":
         events = events.order_by(models.Event.date.asc(), models.Event.event_name.asc())
     events = events.all()
-    result = []
     for event in events:
-        result.append(event[0])
-    return result
+        events[event]["name"] = event.pop("event_name")
+    return events
 
 
 def get_person_by_event(db: Session, event_id: int):
