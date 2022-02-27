@@ -6,8 +6,8 @@
       <AddForm @display="setDisplay"/>
     </v-app-bar>
     <v-main>
-      <Search class="mt-4" style="max-width: 75em;"/>
-      <List class="d-flex justify-center mt-3" @display="setDisplay"/>
+      <Search class="mt-4" style="max-width: 75em;" @searchFormChanged="getNewResults"/>
+      <List class="d-flex justify-center mt-3" @display="setDisplay" :searchForm="searchForm"/>
     </v-main>
     <SnackBar :display="display"/>
   </v-app>
@@ -31,11 +31,15 @@ export default {
 
   data: () => ({
     display: null,
+    searchForm: {}
   }),
 
   methods: {
     setDisplay: function (display) {
       this.display = display
+    },
+    getNewResults: function (searchForm) {
+      this.searchForm = searchForm
     }
   }
 };

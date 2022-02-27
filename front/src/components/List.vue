@@ -7,7 +7,8 @@
 </template>
 
 <script>
-import Event from "@/components/Event";
+import Event from "@/components/Event"
+
 export default {
   name: 'List',
 
@@ -15,23 +16,26 @@ export default {
     Event
   },
 
+  props: ["searchForm"],
+
   data: () => ({
-    events: [],
-    filters: {
-      search: "daz",
-      date: null,
-      order_by: "descending",
-    }
+    events: []
   }),
 
   created() {
-    this.getEvents()
+    this.getEvents({
+      search: null,
+      date: null,
+      order_by: "Descending",
+    })
   },
 
   methods: {
-    getEvents: function () {
-      this.$http.post(this.$api + "/event/filter", this.filters)
-        .then(events => events.data.map(event => this.events.push(event)))
+    getEvents: function (search) {
+      this.$http.post(this.$api + "/event/filter", search)
+        .then(response => {
+          this.events = response.data
+        })
         .catch(error => {
           this.$emit('display', {
             timeout: 4000,
@@ -39,7 +43,15 @@ export default {
             type: "error"
           })
         })
+    }
+  },
 
+  watch: {
+    searchForm: {
+      handler(search) {
+        this.getEvents(search)
+      },
+      deep: true
     }
   }
 }

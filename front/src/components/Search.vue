@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-text-field v-model="search" label="Search" prepend-icon="mdi-magnify"></v-text-field>
+        <v-text-field v-model="form.search" label="Search" prepend-icon="mdi-magnify"></v-text-field>
       </v-col>
       <v-col>
         <v-menu
@@ -22,10 +22,11 @@
                 v-bind="attrs"
                 v-on="on"
                 clearable
+                @click:clear="clearDates"
             ></v-text-field>
           </template>
           <v-date-picker
-              v-model="dates"
+              v-model="form.dates"
               no-title
               scrollable
               range
@@ -36,11 +37,10 @@
       </v-col>
       <v-col>
         <v-select
-            v-model="order"
+            v-model="form.order_by"
             :items="orderMethods"
             label="Order by (date)"
             :prepend-icon="orderIcon"
-            clearable
         ></v-select>
       </v-col>
     </v-row>
@@ -52,27 +52,42 @@
     name: 'Search',
 
     data: () => ({
-      search: "",
-      dates: null,
       menu: false,
-      order: "Descending",
+      form: {
+        search: "",
+        dates: null,
+        order_by: "Descending",
+      },
       orderMethods: ["Ascending", "Descending"],
       orderIcon: "mdi-rotate-90 mdi-arrow-top-right-thin"
     }),
 
+    methods: {
+      clearDates: function () {
+        this.form.dates = null
+        this.$emit('searchFormChanged', this.form)
+      }
+    },
+
     computed: {
       dateFormatToDisplay: function() {
-        if (this.dates === null) return null
-        if (this.dates.length === 1) return this.$dateFormat(this.dates[0])
-        if (this.dates[0] === this.dates[1]) return this.$dateFormat(this.dates[0])
-        return `${this.$dateFormat(this.dates[0])} to ${this.$dateFormat(this.dates[1])}`
+        if (this.form.dates === null) return null
+        if (this.form.dates.length === 1) return this.$dateFormat(this.form.dates[0])
+        if (this.form.dates[0] === this.form.dates[1]) return this.$dateFormat(this.form.dates[0])
+        return `${this.$dateFormat(this.form.dates[0])} to ${this.$dateFormat(this.form.dates[1])}`
       },
     },
 
     watch: {
-      order: function () {
-        this.orderIcon = `mdi-arrow-top-right-thin ${this.order === "Descending" ? "mdi-rotate-90" : ""}`
-      }
+      form: {
+        handler() {
+          this.$emit('searchFormChanged', this.form)
+        },
+        deep: true
+      },
+      'form.order_by': function () {
+        this.orderIcon = `mdi-arrow-top-right-thin ${this.form.order_by === "Descending" ? "mdi-rotate-90" : ""}`
+      },
     }
   }
 </script>

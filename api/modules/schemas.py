@@ -57,11 +57,11 @@ class ParticipationRequest(BaseModel):
 
 class Filter(BaseModel):
     search: Optional[str] = None
-    date: Optional[str] = None
+    dates: Optional[List[date]] = None
     order_by: str
 
     @validator('order_by')
     def order_by_must_have_valid_value(cls, v):
-        if v not in ["ascending", "descending"]:
-            raise ValueError('must have ascending or descending value')
+        if v not in ["Ascending", "Descending"]:
+            raise ValueError('must have Ascending or Descending value')
         return v

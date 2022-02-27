@@ -119,19 +119,19 @@ def get_event_by_all_infos(db: Session, event: schemas.Event):
 
 
 def get_all_event(db: Session, filter: schemas.Filter):
-
     events = db.query(models.Event)
     if filter.search is not None:
         events = events.filter(models.Event.event_name.contains(filter.search))
-    if filter.date is not None:
-        events = events.filter(models.Event.date == filter.date)
-    if filter.order_by == "ascending":
-        events = events.order_by(models.Event.date.desc(), models.Event.event_name.asc())
-    elif filter.order_by == "descending":
+    if filter.dates is not None:
+        if len(filter.dates) == 1:
+            events = events.filter(models.Event.date == filter.dates[0])
+        else:
+            events = events.filter(models.Event.date >= filter.dates[0], models.Event.date <= filter.dates[1])
+    if filter.order_by == "Ascending":
         events = events.order_by(models.Event.date.asc(), models.Event.event_name.asc())
+    elif filter.order_by == "Descending":
+        events = events.order_by(models.Event.date.desc(), models.Event.event_name.asc())
     events = events.all()
-    for event in events:
-        events[event]["name"] = event.pop("event_name")
     return events
 
 
