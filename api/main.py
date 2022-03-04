@@ -177,7 +177,7 @@ async def get_event(event_id: int, db: Session = Depends(get_db)):
     return db_event
 
 
-@app.post("/event/filter", tags=["event"], response_model=list)
+@app.post("/event/filter", tags=["event"], response_model=dict)
 async def get_all_event(filter: schemas.Filter, db: Session = Depends(get_db)):
     db_events = crud.get_all_event(db=db, filter=filter)
     if db_events is None:

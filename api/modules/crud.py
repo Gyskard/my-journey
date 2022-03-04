@@ -1,3 +1,5 @@
+import math
+
 from sqlalchemy.orm import Session, undefer
 
 from . import models, schemas
@@ -131,8 +133,11 @@ def get_all_event(db: Session, filter: schemas.Filter):
         events = events.order_by(models.Event.date.asc(), models.Event.event_name.asc())
     elif filter.order_by == "Descending":
         events = events.order_by(models.Event.date.desc(), models.Event.event_name.asc())
-    events = events.all()
-    return events
+    events_page_number = math.ceil(len(events.all()) / 10)
+    if filter.offset is not None:
+        events = events.offset(filter.offset * 10)
+    events = events.limit(10).all()
+    return {'events': events, 'events_page_number': events_page_number}
 
 
 def get_person_by_event(db: Session, event_id: int):

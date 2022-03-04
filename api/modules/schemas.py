@@ -59,9 +59,16 @@ class Filter(BaseModel):
     search: Optional[str] = None
     dates: Optional[List[date]] = None
     order_by: str
+    offset: Optional[int] = None
 
     @validator('order_by')
     def order_by_must_have_valid_value(cls, v):
         if v not in ["Ascending", "Descending"]:
             raise ValueError('must have Ascending or Descending value')
+        return v
+
+    @validator('offset')
+    def offset_must_be_positive_integer(cls, v):
+        if v < 0:
+            raise ValueError('must be a positive integer')
         return v
