@@ -1,14 +1,16 @@
 <template>
-  <v-container>
-    <div>
-      <v-expansion-panels focusable class="mx-3" style="max-width: 75em">
-        <Event v-for="event in events" :key="event" :event="event" />
-      </v-expansion-panels>
-      <div v-if="eventsPageNumber !== 0" class="text-center mt-7">
-        <v-pagination v-model="selectedPage" :length="eventsPageNumber" class="d-block"></v-pagination>
+  <div class="d-flex flex-column">
+    <v-container class="d-flex justify-center">
+        <v-expansion-panels focusable class="mx-3" style="max-width: 75em">
+          <Event v-for="event in events" :key="event" :event="event" />
+        </v-expansion-panels>
+    </v-container>
+    <v-container>
+      <div v-if="eventsPageNumber !== 0" class="mt-7">
+        <v-pagination v-model="selectedPage" :length="eventsPageNumber"></v-pagination>
       </div>
-    </div>
-  </v-container>
+    </v-container>
+  </div>
 </template>
 
 <script>
