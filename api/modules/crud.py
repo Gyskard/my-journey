@@ -133,11 +133,12 @@ def get_all_event(db: Session, filter: schemas.Filter):
         events = events.order_by(models.Event.date.asc(), models.Event.event_name.asc())
     elif filter.order_by == "Descending":
         events = events.order_by(models.Event.date.desc(), models.Event.event_name.asc())
-    events_page_number = math.ceil(len(events.all()) / 10)
+    event_number = len(events.all())
+    events_page_number = math.ceil(event_number / 10)
     if filter.offset is not None:
         events = events.offset(filter.offset * 10)
     events = events.limit(10).all()
-    return {'events': events, 'events_page_number': events_page_number}
+    return {'events': events, 'events_page_number': events_page_number, 'event_number': event_number}
 
 
 def get_person_by_event(db: Session, event_id: int):

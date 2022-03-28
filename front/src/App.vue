@@ -3,7 +3,7 @@
     <v-app-bar app color="primary" dark>
       <v-toolbar-title>My journey</v-toolbar-title>
       <v-spacer></v-spacer>
-      <AddForm @display="setDisplay"/>
+      <Form @display="setDisplay"/>
     </v-app-bar>
     <v-main>
       <Search class="mt-4" style="max-width: 75em;" @searchFormChanged="getNewResults"/>
@@ -16,7 +16,7 @@
 <script>
 import Search from "@/components/Search";
 import List from "@/components/List";
-import AddForm from "@/components/AddForm";
+import Form from "@/components/Form";
 import SnackBar from "@/components/SnackBar";
 
 export default {
@@ -24,7 +24,7 @@ export default {
 
   components: {
     SnackBar,
-    AddForm,
+    Form,
     List,
     Search
   },

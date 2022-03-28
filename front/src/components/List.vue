@@ -1,5 +1,6 @@
 <template>
   <div class="d-flex flex-column">
+    <v-container id="counter" class="d-flex justify-end">{{ eventNumber }} results</v-container>
     <v-container class="d-flex justify-center">
         <v-expansion-panels focusable class="mx-3" style="max-width: 75em">
           <Event v-for="event in events" :key="event" :event="event" />
@@ -28,6 +29,7 @@ export default {
   data: () => ({
     events: [],
     eventsPageNumber: 1,
+    eventNumber: 0,
     selectedPage: null,
     oldSelectedPage: null
   }),
@@ -48,6 +50,7 @@ export default {
           this.events = response.data["events"]
           this.eventsPageNumber = response.data["events_page_number"]
           this.selectedPage = selectedPage + 1
+          this.eventNumber = response.data["event_number"]
         })
         .catch(error => {
           this.$emit('display', {
@@ -79,3 +82,13 @@ export default {
   }
 }
 </script>
+
+<style>
+
+#counter {
+  max-width: 75em;
+  padding-bottom: 0;
+  padding-top: 0
+}
+
+</style>
