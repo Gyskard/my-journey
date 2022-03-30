@@ -76,6 +76,14 @@
                   clearable
                   :rules="[rules.required()]"
               ></v-autocomplete>
+              <v-file-input
+                  v-model="event.form.pictures"
+                  label="Pictures"
+                  counter
+                  prepend-icon=""
+                  multiple
+                  truncate-length="15"
+              ></v-file-input>
             </v-form>
           </v-container>
         </v-card-text>
@@ -199,7 +207,8 @@ export default {
         selectedLocations: null,
         persons: [],
         selectedParticipants: null,
-        participantLabel: "Participant"
+        participantLabel: "Participant",
+        pictures: []
       }
     },
     location: {
@@ -211,7 +220,7 @@ export default {
         streetName: null,
         postalCode: null,
         city: null,
-        country: null,
+        country: null
       },
     },
     person: {
@@ -249,6 +258,7 @@ export default {
   methods: {
     saveEvent: function() {
       this.$refs.eventForm.validate()
+      console.log(this.event.form.pictures)
       if (this.event.valid) {
         let jsonEvent = {
           event_name: this.event.form.name,
@@ -256,6 +266,7 @@ export default {
           location_id: this.event.form.selectedLocations
         }
         if (this.event.form.description) jsonEvent["description"] = this.event.form.description
+        if (this.event.form.pictures.length > 0) jsonEvent["pictures"] = this.event.form.pictures
         this.$http.put(this.$api + "/event", jsonEvent)
             .then((resEvent) => {
               let personIdList = []

@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Date, ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy.types import ARRAY
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -35,6 +36,7 @@ class Event(Base):
     event_name = Column(String)
     description = Column(String)
     date = Column(Date)
+    pictures = Column(ARRAY(String))
     location_id = Column(ForeignKey('location.id'))
 
     location = relationship('Location', lazy='joined')
