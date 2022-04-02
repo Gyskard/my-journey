@@ -258,7 +258,6 @@ export default {
   methods: {
     saveEvent: function() {
       this.$refs.eventForm.validate()
-      console.log(this.event.form.pictures)
       if (this.event.valid) {
         let jsonEvent = {
           event_name: this.event.form.name,
@@ -266,7 +265,6 @@ export default {
           location_id: this.event.form.selectedLocations
         }
         if (this.event.form.description) jsonEvent["description"] = this.event.form.description
-        if (this.event.form.pictures.length > 0) jsonEvent["pictures"] = this.event.form.pictures
         this.$http.put(this.$api + "/event", jsonEvent)
             .then((resEvent) => {
               let personIdList = []
@@ -279,8 +277,19 @@ export default {
               }
               this.$http.put(this.$api + "/participation", jsonParticipation)
                 .then(() => {
-                  this.resetForm("event")
-                  this.displaySuccessMessage(`The event ${jsonEvent["event_name"]} has been created.`)
+                  let formData = new FormData()
+                  console.log(this.event.form.pictures)
+                  for (const picture in this.event.form.pictures) {
+                    formData.append("pictures", this.event.form.pictures[picture])
+                  }
+                  this.$http.post(this.$api + "/pictures", formData)
+                    .then(() => {
+                      this.resetForm("event")
+                      this.displaySuccessMessage(`The event ${jsonEvent["event_name"]} has been created.`)
+                    })
+                    .catch((error) => {
+                      this.displayErrorMessage(error.response.data.detail)
+                    })
                 })
                 .catch((error) => {
                   this.displayErrorMessage(error.response.data.detail)

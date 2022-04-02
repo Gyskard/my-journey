@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_responses import custom_openapi
 from sqlalchemy.orm import Session
@@ -36,7 +36,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 app.openapi = custom_openapi(app)  # used custom_openapi to add custom error in docs
 
@@ -242,3 +241,14 @@ async def delete_participation(participation: schemas.Participation, db: Session
     if participation.event_id in db_event_person:
         raise HTTPException(status_code=500, detail="Participation not deleted")
     return status.HTTP_200_OK
+
+
+@app.post("/pictures", tags=["event"], status_code=201)
+async def upload_pictures(pictures: List[UploadFile], db: Session = Depends(get_db)):
+    filenames = crud.upload_pictures(pictures=pictures)
+
+    # get event_id and put filenames inside
+
+    # if not db_location:
+    #    raise HTTPException(status_code=500, detail="Location not created")
+    return status.HTTP_201_CREATED

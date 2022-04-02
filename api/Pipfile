@@ -12,6 +12,7 @@ uvicorn = "*"
 flake8 = "*"
 requests = "*"
 typing = "*"
+python-multipart = "*"
 
 [dev-packages]
 

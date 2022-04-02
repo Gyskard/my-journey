@@ -1,8 +1,13 @@
 import math
+import shutil
+import uuid
+import os
 
 from sqlalchemy.orm import Session, undefer
 
 from . import models, schemas
+from typing import List
+from fastapi import UploadFile
 
 
 def create_location(db: Session, location: schemas.Location):
@@ -86,7 +91,6 @@ def create_event(db: Session, event: schemas.Event):
         date=event.date,
         location_id=event.location_id,
     )
-    print(event.pictures)
     db.add(db_event)
     db.commit()
     db.refresh(db_event)
@@ -184,3 +188,15 @@ def delete_participation(db: Session, participation: schemas.Participation):
     db.delete(db_event)
     db.commit()
     return True
+
+
+def upload_pictures(pictures: List[UploadFile]):
+    filenames = []
+    if not os.path.exists("../upload"):
+        os.makedirs("../upload")
+    for picture in pictures:
+        filename = str(uuid.uuid4())
+        with open("../upload/" + filename, "wb") as buffer:
+            shutil.copyfileobj(picture.file, buffer)
+        filenames.append(filename)
+    return filenames
