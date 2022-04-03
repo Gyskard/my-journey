@@ -258,106 +258,94 @@ export default {
   methods: {
     saveEvent: function() {
       this.$refs.eventForm.validate()
+      if (!this.event.valid) return
 
-      if (this.event.valid) {
-        const uploadPicturesRequest = async () => {
-          let files = new FormData()
-
-          for (const picture of this.event.form.pictures) files.append("pictures", picture)
-
-          return await this.$http.post(this.$api + "/pictures", files)
-        }
-
-        const createEventRequest = async (filenames) => {
-          let jsonEvent = {
-            event_name: this.event.form.name,
-            date: this.event.form.date,
-            location_id: this.event.form.selectedLocations
-          }
-
-          if (this.event.form.description) jsonEvent["description"] = this.event.form.description
-          console.log(filenames)
-          if (filenames.length > 0) {
-            jsonEvent["pictures"] = filenames
-          }
-
-          return await this.$http.put(this.$api + "/event", jsonEvent)
-        }
-
-        const createParticipationRequest = async (eventId) => {
-          let personIdList = []
-
-          for (const person of this.event.form.persons) personIdList.push(person.id)
-
-          return await this.$http.put(this.$api + "/participation", {
-            event_id: eventId,
-            person_id_list: personIdList
-          })
-        }
-
-        uploadPicturesRequest()
-            .then((uploadPicturesResponse) => {
-              createEventRequest(uploadPicturesResponse.data)
-                .then((createEventResponse) => {
-                  createParticipationRequest(createEventResponse.data)
-                    .then(() => {
-                      this.displaySuccessMessage(`The event ${this.event.form.name} has been created.`)
-                      this.resetForm("event")
-                    })
-                    .catch((error) => {
-                      this.displayErrorMessage(error.response.data.detail)
-                    })
-                })
-                .catch((error) => {
-                  this.displayErrorMessage(error.response.data.detail)
-                })
-            })
-            .catch((error) => {
-              this.displayErrorMessage(error.response.data.detail)
-            })
+      const uploadPicturesRequest = async () => {
+        let files = new FormData()
+        for (const picture of this.event.form.pictures) files.append("pictures", picture)
+        return await this.$http.post(this.$api + "/pictures", files)
       }
+
+      const createEventRequest = async (filenames) => {
+        let jsonEvent = {
+          event_name: this.event.form.name,
+          date: this.event.form.date,
+          location_id: this.event.form.selectedLocations
+        }
+        if (this.event.form.description) jsonEvent["description"] = this.event.form.description
+        if (filenames.length > 0) jsonEvent["pictures"] = filenames
+        return await this.$http.put(this.$api + "/event", jsonEvent)
+      }
+
+      const createParticipationRequest = async (eventId) => {
+        return await this.$http.put(this.$api + "/participation", {
+          event_id: eventId,
+          person_id_list: this.event.form.persons.map(person => person.id)
+        })
+      }
+
+      uploadPicturesRequest()
+          .then((uploadPicturesResponse) => {
+            createEventRequest(uploadPicturesResponse.data)
+              .then((createEventResponse) => {
+                createParticipationRequest(createEventResponse.data)
+                  .then(() => {
+                    this.displaySuccessMessage(`The event ${this.event.form.name} has been created.`)
+                    this.resetForm("event")
+                  })
+                  .catch((error) => {
+                    this.displayErrorMessage(error.response.data.detail)
+                  })
+              })
+              .catch((error) => {
+                this.displayErrorMessage(error.response.data.detail)
+              })
+          })
+          .catch((error) => {
+            this.displayErrorMessage(error.response.data.detail)
+          })
     },
     saveLocation: function () {
       this.$refs.locationForm.validate()
-      if (this.location.valid) {
-        let json = {}
-        json["name"] = this.location.form.name
-        if (this.location.form.houseNumberStreet) json["house_number_street"] = this.location.form.houseNumberStreet
-        if (this.location.form.streetName) json["street_name"] = this.location.form.streetName
-        if (this.location.form.city) json["city"] = this.location.form.city
-        if (this.location.form.country) json["country"] = this.location.form.country
-        if (this.location.form.postalCode) json["postal_code"] = this.location.form.postalCode
-        this.$http.put(this.$api + "/location", json)
-            .then(() => {
-              this.resetForm("location")
-              this.displaySuccessMessage(`The location ${json["name"]} has been created.`)
-            })
-            .catch((error) => {
-              this.displayErrorMessage(error.response.data.detail)
-            })
-      } else {
+      if (!this.location.valid) {
         this.displayErrorMessage('The form is not completed correctly.')
+        return
       }
+      let json = {}
+      json["name"] = this.location.form.name
+      if (this.location.form.houseNumberStreet) json["house_number_street"] = this.location.form.houseNumberStreet
+      if (this.location.form.streetName) json["street_name"] = this.location.form.streetName
+      if (this.location.form.city) json["city"] = this.location.form.city
+      if (this.location.form.country) json["country"] = this.location.form.country
+      if (this.location.form.postalCode) json["postal_code"] = this.location.form.postalCode
+      this.$http.put(this.$api + "/location", json)
+          .then(() => {
+            this.resetForm("location")
+            this.displaySuccessMessage(`The location ${json["name"]} has been created.`)
+          })
+          .catch((error) => {
+            this.displayErrorMessage(error.response.data.detail)
+          })
     },
     savePerson: function () {
       this.$refs.personForm.validate()
-      if (this.person.valid) {
-        let json = {}
-        json["first_name"] = this.person.form.firstName
-        if (this.person.form.lastName) json["last_name"] = this.person.form.lastName
-        this.$http.put(this.$api + "/person", json)
-            .then(() => {
-              const person = `${json["first_name"]} ${this.person.form.lastName ? json["last_name"].toUpperCase() : ""}`
-              this.resetForm("person")
-              this.displaySuccessMessage(`The person ${person} has been created.`)
-              this.getPersons()
-            })
-            .catch((error) => {
-              this.displayErrorMessage(error.response.data.detail)
-            })
-      } else {
+      if (!this.person.valid) {
         this.displayErrorMessage('The form is not completed correctly.')
+        return
       }
+      let json = {}
+      json["first_name"] = this.person.form.firstName
+      if (this.person.form.lastName) json["last_name"] = this.person.form.lastName
+      this.$http.put(this.$api + "/person", json)
+          .then(() => {
+            const person = `${json["first_name"]} ${this.person.form.lastName ? json["last_name"].toUpperCase() : ""}`
+            this.resetForm("person")
+            this.displaySuccessMessage(`The person ${person} has been created.`)
+            this.getPersons()
+          })
+          .catch((error) => {
+            this.displayErrorMessage(error.response.data.detail)
+          })
     },
     getPersons: function () {
       this.$http.get(this.$api + "/person/all")
