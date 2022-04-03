@@ -3,6 +3,8 @@ from typing import Optional, List
 from pydantic import BaseModel, validator
 
 
+# === Location ===
+
 class Location(BaseModel):
     name: str
     house_number_street: Optional[int] = None
@@ -19,6 +21,8 @@ class LocationResponse(Location):
         orm_mode = True
 
 
+# === Person ===
+
 class Person(BaseModel):
     first_name: str
     last_name: Optional[str] = None
@@ -30,6 +34,8 @@ class PersonResponse(Person):
     class Config:
         orm_mode = True
 
+
+# === Event ===
 
 class Event(BaseModel):
     event_name: str
@@ -45,16 +51,6 @@ class EventResponse(Event):
 
     class Config:
         orm_mode = True
-
-
-class Participation(BaseModel):
-    event_id: int
-    person_id: int
-
-
-class ParticipationRequest(BaseModel):
-    event_id: int
-    person_id_list: List[int]
 
 
 class Filter(BaseModel):
@@ -74,3 +70,15 @@ class Filter(BaseModel):
         if v < 0:
             raise ValueError('must be a positive integer')
         return v
+
+
+# === Participation ===
+
+class Participation(BaseModel):
+    event_id: int
+    person_id: int
+
+
+class ParticipationRequest(BaseModel):
+    event_id: int
+    person_id_list: List[int]

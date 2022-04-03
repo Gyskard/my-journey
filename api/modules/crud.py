@@ -10,6 +10,8 @@ from typing import List
 from fastapi import UploadFile
 
 
+# === Location ===
+
 def create_location(db: Session, location: schemas.Location):
     db_location = models.Location(
         name=location.name,
@@ -51,6 +53,8 @@ def delete_location_by_id(db: Session, location_id: int):
     return True
 
 
+# === Person ===
+
 def create_person(db: Session, person: schemas.Person):
     db_person = models.Person(
         first_name=person.first_name,
@@ -84,6 +88,8 @@ def delete_person_by_id(db: Session, person_id: int):
     return True
 
 
+# === Event ===
+
 def create_event(db: Session, event: schemas.Event):
     db_event = models.Event(
         event_name=event.event_name,
@@ -116,7 +122,6 @@ def get_event(db: Session, event_id: int):
     return db.query(models.Event).filter(models.Event.id == event_id).first()
 
 
-# Need to be included in get_all_event
 def get_event_by_all_infos(db: Session, event: schemas.Event):
     return db.query(models.Event) \
         .filter(models.Event.event_name == event.event_name) \
@@ -163,19 +168,21 @@ def get_event_by_person(db: Session, person_id: int):
     return db_event_person
 
 
+def delete_event(db: Session, event_id: int):
+    db_event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    db.delete(db_event)
+    db.commit()
+    return True
+
+
+# === Participation ===
+
 def get_participation(db: Session, person_id: int, event_id: int):
     db_participation = db.query(models.Participation) \
         .filter(models.Participation.person_id == person_id) \
         .filter(models.Participation.event_id == event_id) \
         .all()
     return db_participation
-
-
-def delete_event(db: Session, event_id: int):
-    db_event = db.query(models.Event).filter(models.Event.id == event_id).first()
-    db.delete(db_event)
-    db.commit()
-    return True
 
 
 def delete_participation(db: Session, participation: schemas.Participation):
@@ -187,6 +194,8 @@ def delete_participation(db: Session, participation: schemas.Participation):
     db.commit()
     return True
 
+
+# === Picture ===
 
 def upload_pictures(pictures: List[UploadFile]):
     filenames = []

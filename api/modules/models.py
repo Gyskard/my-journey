@@ -45,9 +45,7 @@ class Event(Base):
 
 class Participation(Base):
     __tablename__ = 'participation'
-    __table_args__ = (
-        UniqueConstraint('event_id', 'person_id', name='person_in_event'),
-    )
+    __table_args__ = (UniqueConstraint('event_id', 'person_id', name='person_in_event'))
 
     event_id = Column(Integer, ForeignKey('event.id'), primary_key=True)
     person_id = Column(Integer, ForeignKey('person.id'), primary_key=True)

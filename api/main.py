@@ -13,27 +13,12 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="My journey",
-    openapi_tags=[
-        {
-            "name": "location",
-        },
-        {
-            "name": "person",
-        },
-        {
-            "name": "event",
-        },
-        {
-            "name": "participation"
-        },
-    ]
+    openapi_tags=[{"name": "location"}, {"name": "person"}, {"name": "event"}, {"name": "participation"}]
 )
-
-origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -50,7 +35,7 @@ def get_db():
         db.close()
 
 
-# need to check if each date is out of range
+# === Location ===
 
 @app.put("/location", tags=["location"], status_code=201)
 async def create_location(location: schemas.Location, db: Session = Depends(get_db)):
@@ -96,6 +81,8 @@ async def delete_location(location_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Location not deleted")
     return status.HTTP_200_OK
 
+
+# === Person ===
 
 @app.put("/person", tags=["person"], status_code=201)
 async def create_person(person: schemas.Person, db: Session = Depends(get_db)):
@@ -156,6 +143,8 @@ async def get_event_by_person(person_id: int, db: Session = Depends(get_db)):
     return db_event_person
 
 
+# === Event ===
+
 @app.put("/event", tags=["event"], status_code=201)
 async def create_event(event: schemas.Event, db: Session = Depends(get_db)):
     db_location = crud.get_location_by_id(db=db, location_id=event.location_id)
@@ -207,6 +196,8 @@ async def delete_event(event_id: int, db: Session = Depends(get_db)):
     return status.HTTP_200_OK
 
 
+# === Participation ===
+
 @app.put("/participation", tags=["participation"], status_code=201)
 async def create_participation(participation: schemas.ParticipationRequest, db: Session = Depends(get_db)):
     db_event = crud.get_event(db=db, event_id=participation.event_id)
@@ -244,6 +235,8 @@ async def delete_participation(participation: schemas.Participation, db: Session
         raise HTTPException(status_code=500, detail="Participation not deleted")
     return status.HTTP_200_OK
 
+
+# === Picture ===
 
 @app.post("/pictures", tags=["event"], response_model=list)
 async def upload_pictures(pictures: List[UploadFile]):
