@@ -258,34 +258,51 @@ export default {
   methods: {
     saveEvent: function() {
       this.$refs.eventForm.validate()
+
       if (this.event.valid) {
-        let jsonEvent = {
-          event_name: this.event.form.name,
-          date: this.event.form.date,
-          location_id: this.event.form.selectedLocations
+        const uploadPicturesRequest = async () => {
+          let files = new FormData()
+
+          for (const picture of this.event.form.pictures) files.append("pictures", picture)
+
+          return await this.$http.post(this.$api + "/pictures", files)
         }
-        if (this.event.form.description) jsonEvent["description"] = this.event.form.description
-        this.$http.put(this.$api + "/event", jsonEvent)
-            .then((resEvent) => {
-              let personIdList = []
-              for (const person of this.event.form.persons) {
-                personIdList.push(person.id)
-              }
-              let jsonParticipation = {
-                event_id: resEvent.data,
-                person_id_list: personIdList
-              }
-              this.$http.put(this.$api + "/participation", jsonParticipation)
-                .then(() => {
-                  let formData = new FormData()
-                  console.log(this.event.form.pictures)
-                  for (const picture in this.event.form.pictures) {
-                    formData.append("pictures", this.event.form.pictures[picture])
-                  }
-                  this.$http.post(this.$api + "/pictures", formData)
+
+        const createEventRequest = async (filenames) => {
+          let jsonEvent = {
+            event_name: this.event.form.name,
+            date: this.event.form.date,
+            location_id: this.event.form.selectedLocations
+          }
+
+          if (this.event.form.description) jsonEvent["description"] = this.event.form.description
+          console.log(filenames)
+          if (filenames.length > 0) {
+            jsonEvent["pictures"] = filenames
+          }
+
+          return await this.$http.put(this.$api + "/event", jsonEvent)
+        }
+
+        const createParticipationRequest = async (eventId) => {
+          let personIdList = []
+
+          for (const person of this.event.form.persons) personIdList.push(person.id)
+
+          return await this.$http.put(this.$api + "/participation", {
+            event_id: eventId,
+            person_id_list: personIdList
+          })
+        }
+
+        uploadPicturesRequest()
+            .then((uploadPicturesResponse) => {
+              createEventRequest(uploadPicturesResponse.data)
+                .then((createEventResponse) => {
+                  createParticipationRequest(createEventResponse.data)
                     .then(() => {
+                      this.displaySuccessMessage(`The event ${this.event.form.name} has been created.`)
                       this.resetForm("event")
-                      this.displaySuccessMessage(`The event ${jsonEvent["event_name"]} has been created.`)
                     })
                     .catch((error) => {
                       this.displayErrorMessage(error.response.data.detail)

@@ -90,6 +90,7 @@ def create_event(db: Session, event: schemas.Event):
         description=event.description,
         date=event.date,
         location_id=event.location_id,
+        pictures=event.pictures
     )
     db.add(db_event)
     db.commit()

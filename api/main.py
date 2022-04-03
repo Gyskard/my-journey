@@ -1,3 +1,5 @@
+import os
+
 from fastapi import Depends, FastAPI, HTTPException, status, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_responses import custom_openapi
@@ -243,12 +245,12 @@ async def delete_participation(participation: schemas.Participation, db: Session
     return status.HTTP_200_OK
 
 
-@app.post("/pictures", tags=["event"], status_code=201)
-async def upload_pictures(pictures: List[UploadFile], db: Session = Depends(get_db)):
-    filenames = crud.upload_pictures(pictures=pictures)
-
-    # get event_id and put filenames inside
-
-    # if not db_location:
-    #    raise HTTPException(status_code=500, detail="Location not created")
-    return status.HTTP_201_CREATED
+@app.post("/pictures", tags=["event"], response_model=list)
+async def upload_pictures(pictures: List[UploadFile]):
+    filenames = []
+    if len(pictures) > 0:
+        filenames = crud.upload_pictures(pictures=pictures)
+        for filename in filenames:
+            if not os.path.isfile("../upload/" + filename):
+                raise HTTPException(status_code=500, detail="Pictures not uploaded")
+    return filenames
