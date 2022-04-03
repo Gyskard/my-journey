@@ -247,6 +247,7 @@ async def delete_participation(participation: schemas.Participation, db: Session
 
 @app.post("/pictures", tags=["event"], response_model=list)
 async def upload_pictures(pictures: List[UploadFile]):
+    print(pictures)
     filenames = []
     if len(pictures) > 0:
         filenames = crud.upload_pictures(pictures=pictures)

@@ -129,10 +129,7 @@ def get_event_by_all_infos(db: Session, event: schemas.Event):
 def get_all_event(db: Session, filter: schemas.Filter):
     events = db.query(models.Event)
     if filter.search is not None:
-        events = events.filter(
-            models.Event.event_name.contains(filter.search) |
-            models.Event.location.name.contains(filter.search)
-        )
+        events = events.filter(models.Event.event_name.contains(filter.search))
     if filter.dates is not None:
         if len(filter.dates) == 1:
             events = events.filter(models.Event.date == filter.dates[0])

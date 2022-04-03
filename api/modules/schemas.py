@@ -36,7 +36,7 @@ class Event(BaseModel):
     description: Optional[str] = None
     date: date
     location_id: int
-    pictures: List[str]
+    pictures: Optional[List[str]] = []
 
 
 class EventResponse(Event):

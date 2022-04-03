@@ -261,6 +261,7 @@ export default {
       if (!this.event.valid) return
 
       const uploadPicturesRequest = async () => {
+        if (this.event.form.pictures.length === 0) return Promise.resolve()
         let files = new FormData()
         for (const picture of this.event.form.pictures) files.append("pictures", picture)
         return await this.$http.post(this.$api + "/pictures", files)
@@ -286,7 +287,7 @@ export default {
 
       uploadPicturesRequest()
           .then((uploadPicturesResponse) => {
-            createEventRequest(uploadPicturesResponse.data)
+            createEventRequest(uploadPicturesResponse ? uploadPicturesResponse.data : [])
               .then((createEventResponse) => {
                 createParticipationRequest(createEventResponse.data)
                   .then(() => {
