@@ -3,7 +3,7 @@ import shutil
 import uuid
 import os
 
-from sqlalchemy.orm import Session, undefer
+from sqlalchemy.orm import Session
 
 from . import models, schemas
 from typing import List
