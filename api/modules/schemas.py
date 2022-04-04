@@ -42,12 +42,12 @@ class Event(BaseModel):
     description: Optional[str] = None
     date: date
     location_id: int
-    pictures: Optional[List[str]] = []
+    files: Optional[List[str]] = []
 
 
 class EventResponse(Event):
     id: int
-    pictures_name: List[str]
+    files_name: List[str]
 
     class Config:
         orm_mode = True

@@ -238,13 +238,13 @@ async def delete_participation(participation: schemas.Participation, db: Session
 
 # === Picture ===
 
-@app.post("/pictures", tags=["event"], response_model=list)
-async def upload_pictures(pictures: List[UploadFile]):
-    print(pictures)
+@app.post("/files", tags=["event"], response_model=list)
+async def upload_files(files: List[UploadFile]):
+    print(files)
     filenames = []
-    if len(pictures) > 0:
-        filenames = crud.upload_pictures(pictures=pictures)
+    if len(files) > 0:
+        filenames = crud.upload_files(files=files)
         for filename in filenames:
             if not os.path.isfile("../upload/" + filename):
-                raise HTTPException(status_code=500, detail="Pictures not uploaded")
+                raise HTTPException(status_code=500, detail="files not uploaded")
     return filenames

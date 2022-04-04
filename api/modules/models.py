@@ -36,7 +36,7 @@ class Event(Base):
     event_name = Column(String)
     description = Column(String)
     date = Column(Date)
-    pictures = Column(ARRAY(String))
+    files = Column(ARRAY(String))
     location_id = Column(ForeignKey('location.id'))
 
     location = relationship('Location', lazy='joined')

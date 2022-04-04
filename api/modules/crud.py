@@ -96,7 +96,7 @@ def create_event(db: Session, event: schemas.Event):
         description=event.description,
         date=event.date,
         location_id=event.location_id,
-        pictures=event.pictures
+        files=event.files
     )
     db.add(db_event)
     db.commit()
@@ -195,15 +195,15 @@ def delete_participation(db: Session, participation: schemas.Participation):
     return True
 
 
-# === Picture ===
+# === File ===
 
-def upload_pictures(pictures: List[UploadFile]):
+def upload_files(files: List[UploadFile]):
     filenames = []
     if not os.path.exists("../upload"):
         os.makedirs("../upload")
-    for picture in pictures:
+    for file in files:
         filename = str(uuid.uuid4())
         with open("../upload/" + filename, "wb") as buffer:
-            shutil.copyfileobj(picture.file, buffer)
+            shutil.copyfileobj(file.file, buffer)
         filenames.append(filename)
     return filenames
