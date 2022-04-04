@@ -245,6 +245,6 @@ async def upload_files(files: List[UploadFile]):
     if len(files) > 0:
         filenames = crud.upload_files(files=files)
         for filename in filenames:
-            if not os.path.isfile("../upload/" + filename):
+            if not os.path.isfile("./upload/" + filename):
                 raise HTTPException(status_code=500, detail="files not uploaded")
     return filenames

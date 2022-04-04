@@ -77,8 +77,8 @@
                   :rules="[rules.required()]"
               ></v-autocomplete>
               <v-file-input
-                  v-model="event.form.pictures"
-                  label="Pictures"
+                  v-model="event.form.files"
+                  label="Files"
                   counter
                   prepend-icon=""
                   multiple
@@ -208,7 +208,7 @@ export default {
         persons: [],
         selectedParticipants: null,
         participantLabel: "Participant",
-        pictures: []
+        files: []
       }
     },
     location: {
@@ -260,11 +260,11 @@ export default {
       this.$refs.eventForm.validate()
       if (!this.event.valid) return
 
-      const uploadPicturesRequest = async () => {
-        if (this.event.form.pictures.length === 0) return Promise.resolve()
+      const uploadFilesRequest = async () => {
+        if (this.event.form.files.length === 0) return Promise.resolve()
         let files = new FormData()
-        for (const picture of this.event.form.pictures) files.append("pictures", picture)
-        return await this.$http.post(this.$api + "/pictures", files)
+        for (const file of this.event.form.files) files.append("files", file)
+        return await this.$http.post(this.$api + "/files", files)
       }
 
       const createEventRequest = async (filenames) => {
@@ -274,7 +274,7 @@ export default {
           location_id: this.event.form.selectedLocations
         }
         if (this.event.form.description) jsonEvent["description"] = this.event.form.description
-        if (filenames.length > 0) jsonEvent["pictures"] = filenames
+        if (filenames.length > 0) jsonEvent["files"] = filenames
         return await this.$http.put(this.$api + "/event", jsonEvent)
       }
 
@@ -285,9 +285,9 @@ export default {
         })
       }
 
-      uploadPicturesRequest()
-          .then((uploadPicturesResponse) => {
-            createEventRequest(uploadPicturesResponse ? uploadPicturesResponse.data : [])
+      uploadFilesRequest()
+          .then((uploadFilesResponse) => {
+            createEventRequest(uploadFilesResponse ? uploadFilesResponse.data : [])
               .then((createEventResponse) => {
                 createParticipationRequest(createEventResponse.data)
                   .then(() => {
