@@ -57,6 +57,24 @@ docker-compose up
 
 Not available yet.
 
+## Tests
+
+### Code quality
+
+PEP8 (with flake8) for Python
+
+```
+cd ./my-journey/api
+python.exe -m pipenv run code_quality
+```
+
+Eslint for Javascript
+
+```
+cd ./my-journey/front
+npm run lint
+```
+
 ## Built With
 
 * VueJS

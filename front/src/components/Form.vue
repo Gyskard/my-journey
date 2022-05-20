@@ -264,7 +264,7 @@ export default {
         if (this.event.form.files.length === 0) return Promise.resolve()
         let files = new FormData()
         for (const file of this.event.form.files) files.append("files", file)
-        return await this.$http.post(this.$api + "/files", files)
+        return await this.$http.put(this.$api + "/files", files)
       }
 
       const createEventRequest = async (filenames) => {

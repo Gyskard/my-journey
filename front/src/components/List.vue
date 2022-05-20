@@ -45,7 +45,6 @@ export default {
   methods: {
     getEvents: function (search, selectedPage) {
       search.offset = selectedPage
-      console.log(search)
       this.$http.post(this.$api + "/event/filter", search)
         .then(response => {
           this.events = response.data["events"]

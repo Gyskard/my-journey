@@ -199,11 +199,11 @@ def delete_participation(db: Session, participation: schemas.Participation):
 
 def upload_files(files: List[UploadFile]):
     filenames = []
-    if not os.path.exists("./upload"):
-        os.makedirs("./upload")
+    if not os.path.exists("./files"):
+        os.makedirs("./files")
     for file in files:
         filename = str(uuid.uuid4())
-        with open("./upload/" + filename, "wb") as buffer:
+        with open("./files/" + filename, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         filenames.append(filename)
     return filenames

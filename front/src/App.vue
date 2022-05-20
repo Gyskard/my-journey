@@ -49,4 +49,8 @@ export default {
 body {
   background-color: #3d3d3d /* to darken firefox scrollbar */
 }
+
+:root {
+  color-scheme: dark /* to darken chrome/edge scrollbar */
+}
 </style>
